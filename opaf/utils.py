@@ -16,23 +16,22 @@ import os
 
 
 def parse_uri(uri, dirname):
-    # returh a absolute path.
-    # current_dirname is needed for 'file://'
     result = ""
-    splited_str=uri.split("://")
-    if len(splited_str)!=2:
+    split_str=uri.split("://")
+
+    if len(split_str) != 2:
         return result
-    #get absolute path according to uri
-    if splited_str[0] == "file":
-        #to absolute path
-        if(not os.path.isabs(splited_str[1])):
-            splited_str[1]=os.path.join(dirname,splited_str[1])
-        if os.path.isfile(splited_str[1]):
-            result = os.path.abspath(splited_str[1])
+
+    # Get absolute path
+    if split_str[0] == "file":
+        if (not os.path.isabs(split_str[1])):
+            split_str[1] = os.path.join(dirname,split_str[1])
+        if os.path.isfile(split_str[1]):
+            result = os.path.abspath(split_str[1])
 
     return result
 
-def str2num(str):
+def str_to_num(str):
     try:
         return int(str)
     except ValueError:

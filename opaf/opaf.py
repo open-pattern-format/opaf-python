@@ -54,7 +54,7 @@ class OPAFDocument:
             if node.nodeType == xml.dom.Node.ELEMENT_NODE:
                 if node.tagName == 'opaf_define_value':
                     name = node.getAttribute("name")
-                    self.opaf_values[name] = opaf.utils.str2num(self.__replace_value(node.getAttribute("value"), self.opaf_values))
+                    self.opaf_values[name] = opaf.utils.str_to_num(self.__replace_value(node.getAttribute("value"), self.opaf_values))
                 elif node.tagName == 'opaf_define_block':
                     name = node.getAttribute("name")
                     self.opaf_block_params[name] = {}
@@ -158,9 +158,9 @@ class OPAFDocument:
                 raise Exception("<%s> attribute '%s' is not defined" % (name, k) + ", line %d"%(sys._getframe().f_lineno))
 
             if node.hasAttribute(k):
-                params[k] = opaf.utils.str2num(node.getAttribute(k))
+                params[k] = opaf.utils.str_to_num(node.getAttribute(k))
             else:
-                params[k] = opaf.utils.str2num(v)
+                params[k] = opaf.utils.str_to_num(v)
 
         # Handle repeats
         repeat = 1
@@ -235,9 +235,9 @@ class OPAFDocument:
                 raise Exception("<%s> attribute '%s' is not defined" % (name, k) + ", line %d" % (sys._getframe().f_lineno))
 
             if node.hasAttribute(k):
-                params[k] = opaf.utils.str2num(node.getAttribute(k))
+                params[k] = opaf.utils.str_to_num(node.getAttribute(k))
             else:
-                params[k] = opaf.utils.str2num(v)
+                params[k] = opaf.utils.str_to_num(v)
 
         # Replace value
         try:
