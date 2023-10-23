@@ -168,6 +168,9 @@ class OPAFDocument:
         if node.hasAttribute("repeat"):
             repeat = int(float(node.getAttribute("repeat")))
 
+        # Add repeat_total to params
+        params['repeat_total'] = repeat
+
         xml_strs = []
 
         for i in range(repeat):
