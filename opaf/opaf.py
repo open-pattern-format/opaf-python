@@ -53,6 +53,13 @@ class OPAFDocument:
         for node in root.childNodes:
             if node.nodeType == xml.dom.Node.ELEMENT_NODE:
                 if node.tagName == 'opaf_define_value':
+                    # Check condition
+                    condition = True
+                    if node.hasAttribute("condition"):
+                        condition = self.__replace_value(node.getAttribute("condition"), self.opaf_values)
+                    if condition == 'False' or condition == '0':
+                        continue
+
                     name = node.getAttribute("name")
                     self.opaf_values[name] = opaf.utils.str_to_num(self.__replace_value(node.getAttribute("value"), self.opaf_values))
                 elif node.tagName == 'opaf_define_block':
@@ -210,7 +217,7 @@ class OPAFDocument:
         # Remove opaf node
         parent.removeChild(node)
 
-    def replace_opaf_action(self, node):
+    def __replace_opaf_action(self, node):
         parent = node.parentNode
 
         if not node.hasAttribute("name"):
@@ -315,7 +322,7 @@ class OPAFDocument:
             nodes = self.out_doc.getElementsByTagName("opaf_action")
             if nodes.length != 0:
                 for node in list(nodes):
-                    self.replace_opaf_action(node)
+                    self.__replace_opaf_action(node)
             else:
                 break
 
