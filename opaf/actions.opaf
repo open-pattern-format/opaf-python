@@ -18,11 +18,11 @@
 
 <actions>
 
-    <opaf_define_action name="knit" params="count=1 colour=0 through_back_loop=False">
+    <opaf_define_action name="knit" params="count=1 colour=main through_back_loop=False">
         <knit count="${count}" colour="${colour}" through_back_loop="${through_back_loop}" total="${count}" />
     </opaf_define_action>
 
-    <opaf_define_action name="purl" params="count=1 colour=0 through_back_loop=False">
+    <opaf_define_action name="purl" params="count=1 colour=main through_back_loop=False">
         <purl count="${count}" colour="${colour}" through_back_loop="${through_back_loop}" total="${count}" />
     </opaf_define_action>
 
@@ -30,39 +30,39 @@
         <none count="${count}" total="0" />
     </opaf_define_action>
 
-    <opaf_define_action name="left_cable" params="left right colour=0">
+    <opaf_define_action name="left_cable" params="left right colour=main">
         <left_cable count="${left}/${right}" colour="${colour}" total="${left + right}" />
     </opaf_define_action>
 
-    <opaf_define_action name="right_cable" params="left right colour=0">
+    <opaf_define_action name="right_cable" params="left right colour=main">
         <right_cable count="${left}/${right}" colour="${colour}" total="${left + right}" />
     </opaf_define_action>
 
-    <opaf_define_action name="knit_together" params="stitches=2 count=1 colour=0 through_back_loop=False">
+    <opaf_define_action name="knit_together" params="stitches=2 count=1 colour=main through_back_loop=False">
         <knit_together stitches="${stitches}" count="${count}" colour="${colour}" through_back_loop="${through_back_loop}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="purl_together" params="stitches=2 count=1 colour=0 through_back_loop=False">
+    <opaf_define_action name="purl_together" params="stitches=2 count=1 colour=main through_back_loop=False">
         <purl_together stitches="${stitches}" count="${count}" colour="${colour}" through_back_loop="${through_back_loop}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="slip_knit" params="stitches=2 count=1 colour=0">
+    <opaf_define_action name="slip_knit" params="stitches=2 count=1 colour=main">
         <slip_knit stitches="${stitches}" count="${count}" colour="${colour}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="slip" params="count=1 colour=0 yarn_in_front=False">
+    <opaf_define_action name="slip" params="count=1 colour=main yarn_in_front=False">
         <slip count="${count}" colour="${colour}" yarn_in_front="${yarn_in_front}" total="${count}" />
     </opaf_define_action>
 
-    <opaf_define_action name="double_stitch" params="colour=0">
+    <opaf_define_action name="double_stitch" params="colour=main">
         <double_stitch colour="${colour}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="knit_double_stitch" params="colour=0">
+    <opaf_define_action name="knit_double_stitch" params="colour=main">
         <knit_double_stitch colour="${colour}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="purl_double_stitch" params="colour=0">
+    <opaf_define_action name="purl_double_stitch" params="colour=main">
         <purl_double_stitch colour="${colour}" total="1" />
     </opaf_define_action>
 
@@ -77,15 +77,15 @@
             lace
         </type>
     -->
-    <opaf_define_action name="cast_on" params="count=1 colour=0 type=preferred">
+    <opaf_define_action name="cast_on" params="count=1 colour=main type=preferred">
         <cast_on count="${count}" colour="${colour}" type="${type}" total="${count}" />
     </opaf_define_action>
 
-    <opaf_define_action name="pick_up" params="count=1 colour=0">
+    <opaf_define_action name="pick_up" params="count=1 colour=main">
         <pick_up count="${count}" colour="${colour}" total="${count}" />
     </opaf_define_action>
 
-    <opaf_define_action name="bind_off" params="count=1 colour=0">
+    <opaf_define_action name="bind_off" params="count=1 colour=main">
         <bind_off count="${count}" colour="${colour}" total="0" />
     </opaf_define_action>
 
@@ -93,11 +93,11 @@
         <instruction text="${text}" total="0" />
     </opaf_define_action>
 
-    <opaf_define_action name="make_one_left" params="colour=0">
+    <opaf_define_action name="make_one_left" params="colour=main">
         <make_one_left colour="${colour}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="make_one_right" params="colour=0">
+    <opaf_define_action name="make_one_right" params="colour=main">
         <make_one_right colour="${colour}" total="1" />
     </opaf_define_action>
 
