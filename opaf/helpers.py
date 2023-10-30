@@ -16,12 +16,19 @@ import math
 import sys
 import xml.dom.minidom
 
-def __increase_even_round(count, increase, colour, stitch_type, make_type):
+
+def __increase_even_round(count, num, colour, stitch_type, action_type):
+    return __even_round(count, num, colour, stitch_type, action_type)
+
+def __decrease_even_round(count, num, colour, stitch_type, action_type):
+    return __even_round(count, num, colour, stitch_type, action_type, 2)
+
+def __even_round(count, num, colour, stitch_type, action_type, offset=0):
     # Calculate knit count
-    stitch_count = math.ceil(count / increase)
-    remainder = count % increase
+    stitch_count = math.ceil(count / num) - offset
+    remainder = count % num
     first_repeat = 0 if remainder == 0 else math.ceil(remainder / 2)
-    main_repeat = increase - (count % increase)
+    main_repeat = num - (count % num)
     last_repeat = 0 if remainder == 0 else math.floor(remainder / 2)
 
     # Generate OPAF block
@@ -37,7 +44,7 @@ def __increase_even_round(count, increase, colour, stitch_type, make_type):
         stitch_element.setAttribute("count", str(stitch_count))
         stitch_element.setAttribute("colour", colour)
         make_element = doc.createElement("opaf_action")
-        make_element.setAttribute("name", make_type)
+        make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
 
         if(first_repeat > 1):
@@ -58,7 +65,7 @@ def __increase_even_round(count, increase, colour, stitch_type, make_type):
         stitch_element.setAttribute("count", str(stitch_count - 1))
         stitch_element.setAttribute("colour", colour)
         make_element = doc.createElement("opaf_action")
-        make_element.setAttribute("name", make_type)
+        make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
 
         if(main_repeat > 1):
@@ -79,7 +86,7 @@ def __increase_even_round(count, increase, colour, stitch_type, make_type):
         stitch_element.setAttribute("count", str(stitch_count))
         stitch_element.setAttribute("colour", colour)
         make_element = doc.createElement("opaf_action")
-        make_element.setAttribute("name", make_type)
+        make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
 
         if(last_repeat > 1):
@@ -112,7 +119,7 @@ def increase_even_round(node):
         colour = "main"
 
     xml = __increase_even_round(count, increase, colour, "knit", "make_one")
-    
+
     return xml
 
 def increase_even_purl_round(node):
@@ -132,5 +139,45 @@ def increase_even_purl_round(node):
         colour = "main"
 
     xml = __increase_even_round(count, increase, colour, "purl", "make_one_purl")
+
+    return xml
+
+def decrease_even_round(node):
+    if node.hasAttribute("count"):
+        count = int(node.getAttribute("count"))
+    else:
+        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+
+    if node.hasAttribute("decrease"):
+        decrease = int(node.getAttribute("decrease"))
+    else:
+        raise AttributeError("opaf_helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+
+    if node.hasAttribute("colour"):
+        colour = node.getAttribute("colour")
+    else:
+        colour = "main"
+
+    xml = __decrease_even_round(count, decrease, colour, "knit", "knit_together")
     
+    return xml
+
+def decrease_even_purl_round(node):
+    if node.hasAttribute("count"):
+        count = int(node.getAttribute("count"))
+    else:
+        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+
+    if node.hasAttribute("decrease"):
+        decrease = int(node.getAttribute("decrease"))
+    else:
+        raise AttributeError("opaf_helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+
+    if node.hasAttribute("colour"):
+        colour = node.getAttribute("colour")
+    else:
+        colour = "main"
+
+    xml = __decrease_even_round(count, decrease, colour, "purl", "purl_together")
+
     return xml
