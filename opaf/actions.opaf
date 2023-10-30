@@ -93,12 +93,26 @@
         <instruction text="${text}" total="0" />
     </opaf_define_action>
 
-    <opaf_define_action name="make_one_left" params="colour=main">
-        <make_one_left colour="${colour}" total="1" />
+    <!-- Cast On
+        <type>
+            preferred
+            left
+            right
+        </type>
+    -->
+    <opaf_define_action name="make_one" params="colour=main type=preferred">
+        <make_one type="${type}" colour="${colour}" total="1" />
     </opaf_define_action>
 
-    <opaf_define_action name="make_one_right" params="colour=main">
-        <make_one_right colour="${colour}" total="1" />
+    <!-- Cast On
+        <type>
+            preferred
+            left
+            right
+        </type>
+    -->
+    <opaf_define_action name="make_one_purl" params="colour=main type=preferred">
+        <make_one_purl type="${type}" colour="${colour}" total="1" />
     </opaf_define_action>
 
 </actions>
