@@ -192,7 +192,7 @@ class OPAFDocument:
                 raise Exception("<%s>" % name + ", line %d"%(sys._getframe().f_lineno) + ", " + str(e))
         
         # Determine if repeats are equal
-        if repeat > 1 and len(set(xml_strs)) == 1 and not self.expand_repeats:
+        if repeat > 1 and len(set(xml_strs)) == 1:
             # Add repeat element and add existing block nodes
             new_doc = xml.dom.minidom.Document()
             root_element = new_doc.createElement("repeat_block")
@@ -296,6 +296,22 @@ class OPAFDocument:
         # Remove parent node
         parent.removeChild(node)
 
+    def __expand_repeat(self, node):
+        parent = node.parentNode
+
+        if not node.hasAttribute("count"):
+            raise Exception("repeat attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+
+        count = int(node.getAttribute("count"))
+
+        for i in range(0, count):
+            for child in list(node.childNodes):
+                child_clone = child.cloneNode(True)
+                parent.insertBefore(child_clone, node)
+
+        # Remove parent node
+        parent.removeChild(node)
+
     def __parse(self):
         # Parse OPAF library
         dir_path = os.path.realpath(os.path.dirname(__file__))
@@ -374,6 +390,20 @@ class OPAFDocument:
         # Check depth
         if self.out_doc.getElementsByTagName("opaf_action").length != 0:
             raise Exception("Recursion level is too deep (must<=10), " + "line %d" % (sys._getframe().f_lineno))
+
+        # Expand repeats
+        if self.expand_repeats:
+            for _ in range(10):
+                nodes = self.out_doc.getElementsByTagName("repeat")
+                if nodes.length != 0:
+                    for node in list(nodes):
+                        self.__expand_repeat(node)
+                else:
+                    break
+
+            # Check depth
+            if self.out_doc.getElementsByTagName("repeat").length != 0:
+                raise Exception("Recursion level is too deep (must<=10), " + "line %d" % (sys._getframe().f_lineno))
 
         return self
 
