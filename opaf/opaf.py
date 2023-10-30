@@ -22,7 +22,7 @@ import re
 import xml.dom.minidom
 from math import *
 
-import opaf.utils
+from opaf import utils, helpers
 
 class OPAFDocument:
     def __init__(self,
@@ -46,7 +46,7 @@ class OPAFDocument:
         # Config variables
         self.expand_repeats = expand_repeats
 
-    #### Private Funtions ###
+    #### Private Functions ###
 
     def __parse_opaf_definition(self, doc):
         root = doc.documentElement
@@ -61,7 +61,7 @@ class OPAFDocument:
                         continue
 
                     name = node.getAttribute("name")
-                    self.opaf_values[name] = opaf.utils.str_to_num(self.__replace_value(node.getAttribute("value"), self.opaf_values))
+                    self.opaf_values[name] = utils.str_to_num(self.__replace_value(node.getAttribute("value"), self.opaf_values))
                 elif node.tagName == 'opaf_define_block':
                     name = node.getAttribute("name")
                     self.opaf_block_params[name] = {}
@@ -100,7 +100,7 @@ class OPAFDocument:
             if node.nodeType == xml.dom.Node.ELEMENT_NODE:
                 if node.tagName == 'opaf_include':
                     uri = node.getAttribute("uri")
-                    filepath = opaf.utils.parse_uri(uri, dir)
+                    filepath = utils.parse_uri(uri, dir)
                     if filepath != "":
                         tmp_doc = xml.dom.minidom.parse(filepath)
                         self.__include_opaf_definition(tmp_doc, os.path.dirname(filepath))
@@ -120,7 +120,8 @@ class OPAFDocument:
                     or node.tagName == 'opaf_define_action' \
                     or node.tagName == 'opaf_include' \
                     or node.tagName == 'opaf_action' \
-                    or node.tagName == 'opaf_block':
+                    or node.tagName == 'opaf_block' \
+                    or node.tagName == 'opaf_helper':
                     root.removeChild(node)
 
     def __replace_value(self, xml_str, value_dict):
@@ -165,9 +166,9 @@ class OPAFDocument:
                 raise Exception("<%s> attribute '%s' is not defined" % (name, k) + ", line %d"%(sys._getframe().f_lineno))
 
             if node.hasAttribute(k):
-                params[k] = opaf.utils.str_to_num(node.getAttribute(k))
+                params[k] = utils.str_to_num(node.getAttribute(k))
             else:
-                params[k] = opaf.utils.str_to_num(v)
+                params[k] = utils.str_to_num(v)
 
         # Handle repeats
         repeat = 1
@@ -186,7 +187,7 @@ class OPAFDocument:
 
             # Replace parameters
             try:
-                xml_strs.append(self.__replace_value(xml_str,params))
+                xml_strs.append(self.__replace_value(xml_str, params))
             except Exception as e:
                 raise Exception("<%s>" % name + ", line %d"%(sys._getframe().f_lineno) + ", " + str(e))
         
@@ -217,6 +218,38 @@ class OPAFDocument:
         # Remove opaf node
         parent.removeChild(node)
 
+
+    def __replace_opaf_helper(self, node):
+        parent = node.parentNode
+
+        if not node.hasAttribute("name"):
+            raise Exception("opaf_helper attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+
+        name = node.getAttribute("name")
+
+        # Check action
+        if not hasattr(helpers, name):
+            raise Exception("opaf_helper<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
+
+        # Check condition
+        condition = True
+        if node.hasAttribute("condition"):
+            condition = node.getAttribute("condition")
+        if condition == 'False' or condition == '0':
+            parent.removeChild(node)
+            return
+
+        # Get function
+        helper = getattr(helpers, name)
+        result = helper(node)
+
+        for cc in list(result.childNodes):
+            parent.insertBefore(cc, node)
+
+        # Remove opaf node
+        parent.removeChild(node)
+
+
     def __replace_opaf_action(self, node):
         parent = node.parentNode
 
@@ -245,9 +278,9 @@ class OPAFDocument:
                 raise Exception("<%s> attribute '%s' is not defined" % (name, k) + ", line %d" % (sys._getframe().f_lineno))
 
             if node.hasAttribute(k):
-                params[k] = opaf.utils.str_to_num(node.getAttribute(k))
+                params[k] = utils.str_to_num(node.getAttribute(k))
             else:
-                params[k] = opaf.utils.str_to_num(v)
+                params[k] = utils.str_to_num(v)
 
         # Replace value
         try:
@@ -278,7 +311,7 @@ class OPAFDocument:
         self.__remove_opaf_definition(self.src_doc)
 
 
-    #### Public Funtions ###
+    #### Public Functions ###
     
     def set_expand_repeats(self, value):
         self.expand_repeats = value
@@ -316,6 +349,18 @@ class OPAFDocument:
         if self.out_doc.getElementsByTagName("opaf_block").length != 0:
             raise Exception("[line %d]"%(sys._getframe().f_lineno)+"recursion level too deep (must<=10).")
 
+        # Replace helpers
+        for _ in range(10):
+            nodes = self.out_doc.getElementsByTagName("opaf_helper")
+            if nodes.length != 0:
+                for node in list(nodes):
+                    self.__replace_opaf_helper(node)
+            else:
+                break
+
+        # Check depth
+        if self.out_doc.getElementsByTagName("opaf_helper").length != 0:
+            raise Exception("Recursion level is too deep (must<=10), " + "line %d" % (sys._getframe().f_lineno))
 
         # Replace actions
         for _ in range(10):
