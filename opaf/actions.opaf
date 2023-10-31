@@ -115,4 +115,8 @@
         <make_one_purl type="${type}" colour="${colour}" total="1" />
     </opaf_define_action>
 
+    <opaf_define_action name="yarn_over" params="count=1 colour=main">
+        <yarn_over count="${count}" colour="${colour}" total="${count}" />
+    </opaf_define_action>
+
 </actions>
