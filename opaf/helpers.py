@@ -103,6 +103,9 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
 
 
 def increase_even_round(node):
+    supported_stitches = ["knit", "purl"]
+    supported_actions = ["make_one", "make_one_purl", "yarn_over"]
+
     if node.hasAttribute("count"):
         count = int(node.getAttribute("count"))
     else:
@@ -118,31 +121,28 @@ def increase_even_round(node):
     else:
         colour = "main"
 
-    xml = __increase_even_round(count, increase, colour, "knit", "make_one")
-
-    return xml
-
-def increase_even_purl_round(node):
-    if node.hasAttribute("count"):
-        count = int(node.getAttribute("count"))
+    if node.hasAttribute("stitch"):
+        stitch = node.getAttribute("stitch")
+        if not stitch in supported_stitches:
+            raise AttributeError("stitch with name '" + stitch + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
     else:
-        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        stitch = supported_stitches[0]
 
-    if node.hasAttribute("increase"):
-        increase = int(node.getAttribute("increase"))
+    if node.hasAttribute("action"):
+        action = node.getAttribute("action")
+        if not action in supported_actions:
+            raise AttributeError("action with name '" + action + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
     else:
-        raise AttributeError("opaf_helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        action = supported_actions[0]
 
-    if node.hasAttribute("colour"):
-        colour = node.getAttribute("colour")
-    else:
-        colour = "main"
-
-    xml = __increase_even_round(count, increase, colour, "purl", "make_one_purl")
+    xml = __increase_even_round(count, increase, colour, stitch, action)
 
     return xml
 
 def decrease_even_round(node):
+    supported_stitches = ["knit", "purl"]
+    supported_actions = ["knit_together", "purl_together", "slip_knit"]
+
     if node.hasAttribute("count"):
         count = int(node.getAttribute("count"))
     else:
@@ -158,26 +158,20 @@ def decrease_even_round(node):
     else:
         colour = "main"
 
-    xml = __decrease_even_round(count, decrease, colour, "knit", "knit_together")
-    
-    return xml
-
-def decrease_even_purl_round(node):
-    if node.hasAttribute("count"):
-        count = int(node.getAttribute("count"))
+    if node.hasAttribute("stitch"):
+        stitch = node.getAttribute("stitch")
+        if not stitch in supported_stitches:
+            raise AttributeError("stitch with name '" + stitch + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
     else:
-        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        stitch = supported_stitches[0]
 
-    if node.hasAttribute("decrease"):
-        decrease = int(node.getAttribute("decrease"))
+    if node.hasAttribute("action"):
+        action = node.getAttribute("action")
+        if not action in supported_actions:
+            raise AttributeError("action with name '" + action + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
     else:
-        raise AttributeError("opaf_helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        action = supported_actions[0]
 
-    if node.hasAttribute("colour"):
-        colour = node.getAttribute("colour")
-    else:
-        colour = "main"
-
-    xml = __decrease_even_round(count, decrease, colour, "purl", "purl_together")
+    xml = __decrease_even_round(count, decrease, colour, stitch, action)
 
     return xml
