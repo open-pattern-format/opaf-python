@@ -42,11 +42,38 @@ class OPAFDocument:
         self.src_dir = os.path.dirname(os.path.abspath(src_path))
         self.src_doc = None
         self.out_doc = None
+        self.colours = None
 
         # Config variables
         self.expand_repeats = expand_repeats
 
     #### Private Functions ###
+
+    def __parse_pattern(self, doc):
+        root = doc.documentElement
+
+        # Parse colours
+        colours_node = root.getElementsByTagName("colours")
+
+        if colours_node.length == 0:
+            raise Exception("Required element 'colours' is not defined")
+
+        colour_elements = colours_node[0].getElementsByTagName("colour")
+
+        if colour_elements.length == 0:
+            raise Exception("No 'colour' elements have been defined")
+
+        self.colours = []
+
+        for colour in colour_elements:
+            if not colour.hasChildNodes():
+                continue
+
+            colour = colour.firstChild
+
+            if colour.nodeType == xml.dom.Node.TEXT_NODE:
+                self.colours.append(colour.nodeValue)
+
 
     def __parse_opaf_definition(self, doc):
         root = doc.documentElement
@@ -320,11 +347,20 @@ class OPAFDocument:
         for opaf_path in self.common_opaf_paths:
             self.__parse_opaf_definition(xml.dom.minidom.parse(opaf_path))
 
+        self.__parse_pattern(self.src_doc)
+
         self.__include_opaf_definition(self.src_doc, self.src_dir)
 
         self.__parse_opaf_definition(self.src_doc)
 
         self.__remove_opaf_definition(self.src_doc)
+
+    def __check_src_doc(self):
+        if self.src_doc == None:
+            raise Exception("Source document is not defined")
+
+        if not self.src_doc.documentElement.tagName == "pattern":
+            raise Exception("'pattern' root node not found in OPAF file")
 
 
     #### Public Functions ###
@@ -335,6 +371,7 @@ class OPAFDocument:
     def compile(self, custom_values:dict={}):
         # Parse input file
         self.src_doc = xml.dom.minidom.parse(self.src_path)
+        self.__check_src_doc()
         self.__parse()
 
         # Add custom values which should override default values
@@ -343,7 +380,7 @@ class OPAFDocument:
             opaf_values[k] = custom_values[k]
 
         xml_str = self.src_doc.documentElement.toxml()
-
+    
         # Replace opaf values
         try:
             xml_str = self.__replace_value(xml_str, opaf_values)
