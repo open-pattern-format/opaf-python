@@ -29,7 +29,7 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
     secondary_stitch_count = math.floor(count / num) - offset
     remainder = count % num
     secondary_repeat = 0 if remainder == 0 else math.floor(remainder / 2)
-    main_repeat = num - remainder - 1
+    main_repeat = num - remainder - (1 if main_stitch_count > 0 else 0)
     extra_stitches = count - (num * offset) - ((secondary_repeat * secondary_stitch_count) * 2) - (main_repeat * main_stitch_count)
     extra_stitches_start = math.ceil(extra_stitches / 2)
     extra_stitches_end = math.floor(extra_stitches / 2)
@@ -40,11 +40,12 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
     doc.appendChild(root_element)
 
     # Add extra stitches at the start
-    stitch_element = doc.createElement("opaf_action")
-    stitch_element.setAttribute("name", stitch_type)
-    stitch_element.setAttribute("count", str(extra_stitches_start))
-    stitch_element.setAttribute("colour", colour)
-    root_element.appendChild(stitch_element)
+    if extra_stitches_start > 0:
+        stitch_element = doc.createElement("opaf_action")
+        stitch_element.setAttribute("name", stitch_type)
+        stitch_element.setAttribute("count", str(extra_stitches_start))
+        stitch_element.setAttribute("colour", colour)
+        root_element.appendChild(stitch_element)
 
     # Add first repeat
     if secondary_repeat > 0:
@@ -83,10 +84,12 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
             repeat_element.setAttribute("count", str(main_repeat))
             root_element.appendChild(repeat_element)
             repeat_element.appendChild(make_element)
-            repeat_element.appendChild(stitch_element)
+            if main_stitch_count > 0:
+                repeat_element.appendChild(stitch_element)
         else:
             root_element.appendChild(make_element)
-            root_element.appendChild(stitch_element)
+            if main_stitch_count > 0:
+                root_element.appendChild(stitch_element)
 
     # Add final repeat
     if secondary_repeat > 0:
@@ -110,15 +113,16 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
             root_element.appendChild(stitch_element)
 
     # Add extra stitches at the end
-    make_element = doc.createElement("opaf_action")
-    make_element.setAttribute("name", action_type)
-    make_element.setAttribute("colour", colour)
-    stitch_element = doc.createElement("opaf_action")
-    stitch_element.setAttribute("name", stitch_type)
-    stitch_element.setAttribute("count", str(extra_stitches_end))
-    stitch_element.setAttribute("colour", colour)
-    root_element.appendChild(make_element)
-    root_element.appendChild(stitch_element)
+    if extra_stitches_end > 0:
+        make_element = doc.createElement("opaf_action")
+        make_element.setAttribute("name", action_type)
+        make_element.setAttribute("colour", colour)
+        stitch_element = doc.createElement("opaf_action")
+        stitch_element.setAttribute("name", stitch_type)
+        stitch_element.setAttribute("count", str(extra_stitches_end))
+        stitch_element.setAttribute("colour", colour)
+        root_element.appendChild(make_element)
+        root_element.appendChild(stitch_element)
 
     return root_element
 
@@ -178,10 +182,12 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
             repeat_element = doc.createElement("repeat")
             repeat_element.setAttribute("count", str(main_repeat))
             root_element.appendChild(repeat_element)
-            repeat_element.appendChild(stitch_element)
+            if main_stitch_count > 0:
+                repeat_element.appendChild(stitch_element)
             repeat_element.appendChild(make_element)
         else:
-            root_element.appendChild(stitch_element)
+            if main_stitch_count > 0:
+                root_element.appendChild(stitch_element)
             root_element.appendChild(make_element)
 
     # Add last repeat
