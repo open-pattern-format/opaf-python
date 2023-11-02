@@ -130,7 +130,8 @@ def __decrease_even_round(count, num, colour, stitch_type, action_type):
 
 def __even_round(count, num, colour, stitch_type, action_type, offset=0):
     # Calculate knit count
-    stitch_count = math.ceil(count / num) - offset
+    main_stitch_count = math.floor(count / num) - offset
+    secondary_stitch_count = math.ceil(count / num) - offset
     remainder = count % num
     first_repeat = 0 if remainder == 0 else math.ceil(remainder / 2)
     main_repeat = num - remainder
@@ -146,7 +147,7 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
         # Define elements
         stitch_element = doc.createElement("opaf_action")
         stitch_element.setAttribute("name", stitch_type)
-        stitch_element.setAttribute("count", str(stitch_count))
+        stitch_element.setAttribute("count", str(secondary_stitch_count))
         stitch_element.setAttribute("colour", colour)
         make_element = doc.createElement("opaf_action")
         make_element.setAttribute("name", action_type)
@@ -167,7 +168,7 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
         # Define elements
         stitch_element = doc.createElement("opaf_action")
         stitch_element.setAttribute("name", stitch_type)
-        stitch_element.setAttribute("count", str(stitch_count - 1))
+        stitch_element.setAttribute("count", str(main_stitch_count))
         stitch_element.setAttribute("colour", colour)
         make_element = doc.createElement("opaf_action")
         make_element.setAttribute("name", action_type)
@@ -188,7 +189,7 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
         # Define elements
         stitch_element = doc.createElement("opaf_action")
         stitch_element.setAttribute("name", stitch_type)
-        stitch_element.setAttribute("count", str(stitch_count))
+        stitch_element.setAttribute("count", str(secondary_stitch_count))
         stitch_element.setAttribute("colour", colour)
         make_element = doc.createElement("opaf_action")
         make_element.setAttribute("name", action_type)
