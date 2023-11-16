@@ -41,7 +41,7 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
 
     # Add extra stitches at the start
     if extra_stitches_start > 0:
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(extra_stitches_start))
         stitch_element.setAttribute("colour", colour)
@@ -50,10 +50,10 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
     # Add first repeat
     if secondary_repeat > 0:
         # Define elements
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(secondary_stitch_count))
         stitch_element.setAttribute("colour", colour)
@@ -71,10 +71,10 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
     # Add main repeat
     if main_repeat > 0:
         # Define elements
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(main_stitch_count))
         stitch_element.setAttribute("colour", colour)
@@ -94,10 +94,10 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
     # Add final repeat
     if secondary_repeat > 0:
         # Define elements
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(secondary_stitch_count))
         stitch_element.setAttribute("colour", colour)
@@ -114,10 +114,10 @@ def __even_row(count, num, colour, stitch_type, action_type, offset=0):
 
     # Add extra stitches at the end
     if extra_stitches_end > 0:
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(extra_stitches_end))
         stitch_element.setAttribute("colour", colour)
@@ -149,11 +149,11 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
     # Add first repeat
     if first_repeat > 0:
         # Define elements
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(secondary_stitch_count))
         stitch_element.setAttribute("colour", colour)
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
 
@@ -170,11 +170,11 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
     # Add main repeat
     if main_repeat > 0:
         # Define elements
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(main_stitch_count))
         stitch_element.setAttribute("colour", colour)
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
 
@@ -193,11 +193,11 @@ def __even_round(count, num, colour, stitch_type, action_type, offset=0):
     # Add last repeat
     if last_repeat > 0:
         # Define elements
-        stitch_element = doc.createElement("opaf_action")
+        stitch_element = doc.createElement("opaf:action")
         stitch_element.setAttribute("name", stitch_type)
         stitch_element.setAttribute("count", str(secondary_stitch_count))
         stitch_element.setAttribute("colour", colour)
-        make_element = doc.createElement("opaf_action")
+        make_element = doc.createElement("opaf:action")
         make_element.setAttribute("name", action_type)
         make_element.setAttribute("colour", colour)
 
@@ -224,12 +224,12 @@ def increase_even_row(node):
     if node.hasAttribute("count"):
         count = int(node.getAttribute("count"))
     else:
-        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("increase"):
         increase = int(node.getAttribute("increase"))
     else:
-        raise AttributeError("opaf_helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("colour"):
         colour = node.getAttribute("colour")
@@ -261,12 +261,12 @@ def decrease_even_row(node):
     if node.hasAttribute("count"):
         count = int(node.getAttribute("count"))
     else:
-        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("decrease"):
         decrease = int(node.getAttribute("decrease"))
     else:
-        raise AttributeError("opaf_helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("colour"):
         colour = node.getAttribute("colour")
@@ -298,12 +298,12 @@ def increase_even_round(node):
     if node.hasAttribute("count"):
         count = int(node.getAttribute("count"))
     else:
-        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("increase"):
         increase = int(node.getAttribute("increase"))
     else:
-        raise AttributeError("opaf_helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("colour"):
         colour = node.getAttribute("colour")
@@ -335,12 +335,12 @@ def decrease_even_round(node):
     if node.hasAttribute("count"):
         count = int(node.getAttribute("count"))
     else:
-        raise AttributeError("opaf_helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("decrease"):
         decrease = int(node.getAttribute("decrease"))
     else:
-        raise AttributeError("opaf_helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError("opaf helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
     if node.hasAttribute("colour"):
         colour = node.getAttribute("colour")

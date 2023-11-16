@@ -20,6 +20,7 @@ import os
 import sys
 import re
 import xml.dom.minidom
+from xml.parsers.expat import ExpatError
 from math import *
 
 from opaf import utils, helpers
@@ -43,6 +44,7 @@ class OPAFDocument:
         self.src_doc = None
         self.out_doc = None
         self.colours = None
+        self.namespace = None
 
         # Config variables
         self.expand_repeats = expand_repeats
@@ -51,6 +53,9 @@ class OPAFDocument:
 
     def __parse_pattern(self, doc):
         root = doc.documentElement
+
+        # Get namespace URI
+        self.namespace = root.getAttribute("xmlns:opaf")
 
         # Parse colours
         colours_node = root.getElementsByTagName("colours")
@@ -77,9 +82,10 @@ class OPAFDocument:
 
     def __parse_opaf_definition(self, doc):
         root = doc.documentElement
+
         for node in root.childNodes:
             if node.nodeType == xml.dom.Node.ELEMENT_NODE:
-                if node.tagName == 'opaf_define_value':
+                if node.tagName == 'opaf:define_value':
                     # Check condition
                     condition = True
                     if node.hasAttribute("condition"):
@@ -89,7 +95,8 @@ class OPAFDocument:
 
                     name = node.getAttribute("name")
                     self.opaf_values[name] = utils.str_to_num(self.__replace_value(node.getAttribute("value"), self.opaf_values))
-                elif node.tagName == 'opaf_define_block':
+                elif node.tagName == 'opaf:define_block':
+                    node.setAttribute("xmlns:opaf", self.namespace)
                     name = node.getAttribute("name")
                     self.opaf_block_params[name] = {}
 
@@ -104,7 +111,8 @@ class OPAFDocument:
                                 self.opaf_block_params[name][param] = ''
 
                     self.opaf_blocks[name] = node.toxml()
-                elif node.tagName == 'opaf_define_action':
+                elif node.tagName == 'opaf:define_action':
+                    node.setAttribute("xmlns:opaf", self.namespace)
                     name = node.getAttribute("name")
                     self.opaf_action_params[name] = {}
 
@@ -125,7 +133,7 @@ class OPAFDocument:
 
         for node in root.childNodes:
             if node.nodeType == xml.dom.Node.ELEMENT_NODE:
-                if node.tagName == 'opaf_include':
+                if node.tagName == 'opaf:include':
                     uri = node.getAttribute("uri")
                     filepath = utils.parse_uri(uri, dir)
                     if filepath != "":
@@ -135,20 +143,20 @@ class OPAFDocument:
                         # Parse opaf from file
                         self.__parse_opaf_definition(tmp_doc)
                     else:
-                        raise Exception("Couldn't find opaf_include uri： %s" % uri)
+                        raise Exception("Couldn't find opaf include uri： %s" % uri)
         
     def __remove_opaf_definition(self, doc):
         root = doc.documentElement
 
         for node in root.childNodes:
             if node.nodeType == xml.dom.Node.ELEMENT_NODE:
-                if node.tagName == 'opaf_define_value' \
-                    or node.tagName == 'opaf_define_block' \
-                    or node.tagName == 'opaf_define_action' \
-                    or node.tagName == 'opaf_include' \
-                    or node.tagName == 'opaf_action' \
-                    or node.tagName == 'opaf_block' \
-                    or node.tagName == 'opaf_helper':
+                if node.tagName == 'opaf:define_value' \
+                    or node.tagName == 'opaf:define_block' \
+                    or node.tagName == 'opaf:define_action' \
+                    or node.tagName == 'opaf:include' \
+                    or node.tagName == 'opaf:action' \
+                    or node.tagName == 'opaf:block' \
+                    or node.tagName == 'opaf:helper':
                     root.removeChild(node)
 
     def __replace_value(self, xml_str, value_dict):
@@ -168,13 +176,13 @@ class OPAFDocument:
         parent = node.parentNode
 
         if not node.hasAttribute("name"):
-            raise Exception("opaf_block attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+            raise Exception("opaf block attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
         name = node.getAttribute("name")
 
         # Check name
         if name not in self.opaf_blocks.keys():
-            raise Exception("opaf_block<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
+            raise Exception("opaf block<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
 
         # Check condition
         condition = True
@@ -250,13 +258,13 @@ class OPAFDocument:
         parent = node.parentNode
 
         if not node.hasAttribute("name"):
-            raise Exception("opaf_helper attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+            raise Exception("opaf helper attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
         name = node.getAttribute("name")
 
         # Check action
         if not hasattr(helpers, name):
-            raise Exception("opaf_helper<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
+            raise Exception("opaf helper<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
 
         # Check condition
         condition = True
@@ -281,13 +289,13 @@ class OPAFDocument:
         parent = node.parentNode
 
         if not node.hasAttribute("name"):
-            raise Exception("opaf_action attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+            raise Exception("opaf action attribute 'name' is not defined" + ", line %d" % (sys._getframe().f_lineno))
 
         name = node.getAttribute("name")
 
         # Check action
         if name not in self.opaf_actions.keys():
-            raise Exception("opaf_action<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
+            raise Exception("opaf action<%s> is not defined" % name + ", line %d" % (sys._getframe().f_lineno))
 
         # Check condition
         condition = True
@@ -344,10 +352,10 @@ class OPAFDocument:
         dir_path = os.path.realpath(os.path.dirname(__file__))
         self.common_opaf_paths = glob.glob(dir_path + "/" + "*.opaf")
 
+        self.__parse_pattern(self.src_doc)
+
         for opaf_path in self.common_opaf_paths:
             self.__parse_opaf_definition(xml.dom.minidom.parse(opaf_path))
-
-        self.__parse_pattern(self.src_doc)
 
         self.__include_opaf_definition(self.src_doc, self.src_dir)
 
@@ -359,8 +367,13 @@ class OPAFDocument:
         if self.src_doc == None:
             raise Exception("Source document is not defined")
 
+        # Check root node
         if not self.src_doc.documentElement.tagName == "pattern":
             raise Exception("'pattern' root node not found in OPAF file")
+
+        # Check namespace
+        if not self.src_doc.documentElement.hasAttribute("xmlns:opaf"):
+            raise Exception("OPAF namespace is not declared in pattern attributes")
 
 
     #### Public Functions ###
@@ -370,7 +383,11 @@ class OPAFDocument:
 
     def compile(self, custom_values:dict={}):
         # Parse input file
-        self.src_doc = xml.dom.minidom.parse(self.src_path)
+        try:
+            self.src_doc = xml.dom.minidom.parse(self.src_path)
+        except Exception as e:
+            raise ExpatError("OPAF namespace is not declared" + ", " + str(e))
+
         self.__check_src_doc()
         self.__parse()
 
@@ -385,13 +402,13 @@ class OPAFDocument:
         try:
             xml_str = self.__replace_value(xml_str, opaf_values)
         except Exception as e:
-            raise Exception("Failed to process opaf_value, " + "line %d" % (sys._getframe().f_lineno) + ", " + str(e))
+            raise Exception("Failed to process opaf value, " + "line %d" % (sys._getframe().f_lineno) + ", " + str(e))
 
         self.out_doc = xml.dom.minidom.parseString(xml_str)
 
         # Replace blocks
         for _ in range(10):
-            nodes = self.out_doc.getElementsByTagName("opaf_block")
+            nodes = self.out_doc.getElementsByTagName("opaf:block")
             if nodes.length != 0:
                 for node in list(nodes):
                     self.__replace_opaf_block(node)
@@ -399,12 +416,12 @@ class OPAFDocument:
                 break
 
         # Check depth
-        if self.out_doc.getElementsByTagName("opaf_block").length != 0:
+        if self.out_doc.getElementsByTagName("opaf:block").length != 0:
             raise Exception("[line %d]"%(sys._getframe().f_lineno)+"recursion level too deep (must<=10).")
 
         # Replace helpers
         for _ in range(10):
-            nodes = self.out_doc.getElementsByTagName("opaf_helper")
+            nodes = self.out_doc.getElementsByTagName("opaf:helper")
             if nodes.length != 0:
                 for node in list(nodes):
                     self.__replace_opaf_helper(node)
@@ -412,12 +429,12 @@ class OPAFDocument:
                 break
 
         # Check depth
-        if self.out_doc.getElementsByTagName("opaf_helper").length != 0:
+        if self.out_doc.getElementsByTagName("opaf:helper").length != 0:
             raise Exception("Recursion level is too deep (must<=10), " + "line %d" % (sys._getframe().f_lineno))
 
         # Replace actions
         for _ in range(10):
-            nodes = self.out_doc.getElementsByTagName("opaf_action")
+            nodes = self.out_doc.getElementsByTagName("opaf:action")
             if nodes.length != 0:
                 for node in list(nodes):
                     self.__replace_opaf_action(node)
@@ -425,7 +442,7 @@ class OPAFDocument:
                 break
 
         # Check depth
-        if self.out_doc.getElementsByTagName("opaf_action").length != 0:
+        if self.out_doc.getElementsByTagName("opaf:action").length != 0:
             raise Exception("Recursion level is too deep (must<=10), " + "line %d" % (sys._getframe().f_lineno))
 
         # Expand repeats
