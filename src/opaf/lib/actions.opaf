@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+
+<!--
+   Copyright 2023 Scott Ware
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<actions xmlns:opaf="https://github.com/open-pattern-format/opaf/wiki">
+
+    <opaf:define_action name="knit" params="count=1 color=main through_back_loop=False">
+        <knit count="${count}" color="${color}" through_back_loop="${through_back_loop}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="purl" params="count=1 color=main through_back_loop=False">
+        <purl count="${count}" color="${color}" through_back_loop="${through_back_loop}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="none" params="count=1">
+        <none count="${count}" total="0" />
+    </opaf:define_action>
+
+    <opaf:define_action name="left_cable" params="left right color=main">
+        <left_cable count="${left}/${right}" color="${color}" total="${left + right}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="right_cable" params="left right color=main">
+        <right_cable count="${left}/${right}" color="${color}" total="${left + right}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="knit_together" params="stitches=2 count=1 color=main through_back_loop=False">
+        <knit_together stitches="${stitches}" count="${count}" color="${color}" through_back_loop="${through_back_loop}" total="1" />
+    </opaf:define_action>
+
+    <opaf:define_action name="purl_together" params="stitches=2 count=1 color=main through_back_loop=False">
+        <purl_together stitches="${stitches}" count="${count}" color="${color}" through_back_loop="${through_back_loop}" total="1" />
+    </opaf:define_action>
+
+    <opaf:define_action name="slip_knit" params="stitches=2 count=1 color=main">
+        <slip_knit stitches="${stitches}" count="${count}" color="${color}" total="1" />
+    </opaf:define_action>
+
+    <opaf:define_action name="slip" params="count=1 color=main yarn_in_front=False">
+        <slip count="${count}" color="${color}" yarn_in_front="${yarn_in_front}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="double_stitch" params="color=main">
+        <double_stitch color="${color}" total="1" />
+    </opaf:define_action>
+
+    <opaf:define_action name="knit_double_stitch" params="color=main">
+        <knit_double_stitch color="${color}" total="1" />
+    </opaf:define_action>
+
+    <opaf:define_action name="purl_double_stitch" params="color=main">
+        <purl_double_stitch color="${color}" total="1" />
+    </opaf:define_action>
+
+    <!-- Cast On
+        <type>
+            preferred
+            provisional
+            cable
+            purl_wise_cable
+            long_tail
+            backwards_loop
+            lace
+        </type>
+    -->
+    <opaf:define_action name="cast_on" params="count=1 color=main type=preferred">
+        <cast_on count="${count}" color="${color}" type="${type}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="pick_up" params="count=1 color=main">
+        <pick_up count="${count}" color="${color}" total="${count}" />
+    </opaf:define_action>
+
+    <!-- Bind Off
+        <type>
+            preferred
+            i_cord
+        </type>
+    -->
+    <opaf:define_action name="bind_off" params="count=1 color=main type=preferred">
+        <bind_off count="${count}" color="${color}" type="${type}" total="0" />
+    </opaf:define_action>
+
+    <opaf:define_action name="instruction" params="text">
+        <instruction text="${text}" total="0" />
+    </opaf:define_action>
+
+    <!-- Cast On
+        <type>
+            preferred
+            left
+            right
+        </type>
+    -->
+    <opaf:define_action name="make_one" params="color=main type=preferred">
+        <make_one type="${type}" color="${color}" total="1" />
+    </opaf:define_action>
+
+    <!-- Cast On
+        <type>
+            preferred
+            left
+            right
+        </type>
+    -->
+    <opaf:define_action name="make_one_purl" params="color=main type=preferred">
+        <make_one_purl type="${type}" color="${color}" total="1" />
+    </opaf:define_action>
+
+    <opaf:define_action name="yarn_over" params="count=1 color=main">
+        <yarn_over count="${count}" color="${color}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="knit_front_back" params="count=1 color=main">
+        <knit_front_back count="${count}" color="${color}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="purl_front_back" params="count=1 color=main">
+        <purl_front_back count="${count}" color="${color}" total="${count}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="knit_front_back_front" params="count=1 color=main">
+        <knit_front_back_front count="${count}" color="${color}" total="${count * 2}" />
+    </opaf:define_action>
+
+    <opaf:define_action name="purl_front_back_front" params="count=1 color=main">
+        <purl_front_back_front count="${count}" color="${color}" total="${count * 2}" />
+    </opaf:define_action>
+
+</actions>
