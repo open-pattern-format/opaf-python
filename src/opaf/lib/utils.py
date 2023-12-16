@@ -12,12 +12,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import base64
 import os
 import re
 import xml.dom.minidom
 
-from math import *
 from importlib.metadata import metadata
+from io import BytesIO
+from math import *
+from PIL import Image
 from xml.dom.minidom import parseString
 
 
@@ -25,11 +28,13 @@ from xml.dom.minidom import parseString
 SUPPORTED_NODES = [
     'define_action',
     'define_block',
+    'define_image',
     'define_value',
     'action',
     'block',
     'component',
     'helper',
+    'image',
     'round',
     'row'
 ]
@@ -220,3 +225,15 @@ def node_arr_to_string(node_arr):
         str += node.toxml()
     
     return str
+
+def image_to_base64(img_path, size):
+    img = Image.open(img_path)
+    img.convert("RGB")
+    img.thumbnail((size, size))
+
+    img_file = BytesIO()
+    img.save(img_file, format="WEBP")
+    img_bytes = img_file.getvalue()
+    b64_img = base64.b64encode(img_bytes)
+
+    return b64_img.decode('ascii')

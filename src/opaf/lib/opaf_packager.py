@@ -54,6 +54,10 @@ class OPAFPackager:
         for value in self.opaf_doc.opaf_values:
             root_element.appendChild(value.to_node())
 
+        # Images
+        for image in self.opaf_doc.opaf_images:
+            root_element.appendChild(image.to_node())
+
         # Blocks
         for block in self.opaf_doc.opaf_blocks:
             root_element.appendChild(block.to_node())

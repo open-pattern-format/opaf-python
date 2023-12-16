@@ -94,6 +94,17 @@ class OPAFCompiler:
 
         return nodes
 
+    def __process_opaf_image(self, node):
+        name = node.getAttribute('name')
+
+        # Check image is defined
+        self.opaf_doc.get_opaf_image(name)
+
+        new_element = self.compiled_doc.createElement('image')
+        new_element.setAttribute('name', name)
+
+        return [new_element]
+
     def __process_opaf_block(self, node, values):
         # Get block object
         name = node.getAttribute('name')
@@ -181,7 +192,10 @@ class OPAFCompiler:
 
             elif node.tagName == 'opaf:helper':
                 compiled_nodes += self.__process_opaf_helper(node, values)
-        
+
+            elif node.tagName == 'opaf:image':
+                compiled_nodes += self.__process_opaf_image(node)
+
         return compiled_nodes
         
     def __process_component(self, component):

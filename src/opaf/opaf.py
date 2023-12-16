@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 import argparse
+import base64
 import logging
 import os
 
@@ -22,7 +23,7 @@ def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description='Open Pattern Format (OPAF) Build Tool')
     parser.add_argument('--input', required=True, help='Source file path (.opaf)')
-    parser.add_argument('--output', required=False, help='Output file path (.xml)')
+    parser.add_argument('--output', required=False, help='Output directory')
     parser.add_argument('--package', default=False, action='store_true', help='Create distributable OPAF file')
     parser.add_argument('--compile', default=False, action='store_true', help='Compile OPAF package')
     parser.add_argument('--log_level', required=False, default='INFO', help='Log level (Default: INFO)')
@@ -74,7 +75,15 @@ def main():
 
                 # Write XML pattern file
                 if output_path:
-                    Utils.write_to_file(compiled_pattern, output_path)
+                    if not os.path.exists(output_path):
+                        os.makedirs(output_path)
+
+                    Utils.write_to_file(compiled_pattern, output_path + '/' + opaf_doc.name + '.xml')
+
+                    # Extract images
+                    for i in opaf_doc.opaf_images:
+                        with open(output_path + '/' + i.name + '.webp', "wb") as img_file:
+                            img_file.write(base64.b64decode(i.data))
                 else:
                     print(compiled_pattern)
             else:

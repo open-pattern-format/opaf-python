@@ -26,6 +26,7 @@ class OPAFDocument:
         self.opaf_namespace = None
         self.pkg_version = None
         self.opaf_values = []
+        self.opaf_images = []
         self.opaf_blocks = []
         self.opaf_actions = []
         self.opaf_components = []
@@ -49,6 +50,14 @@ class OPAFDocument:
 
     def add_opaf_value(self, value):
         self.opaf_values.append(value)
+
+    def add_opaf_image(self, image):
+        # Check for duplicates
+        for i in self.opaf_images:
+            if i.name == image.name:
+                raise Exception("Image with name '" + image.name + "' already exists")
+
+        self.opaf_images.append(image)
 
     def add_opaf_block(self, block):
         # Check for duplicates
@@ -82,3 +91,10 @@ class OPAFDocument:
                 return b
 
         raise Exception("Block with name '" + name + "' not found")
+
+    def get_opaf_image(self, name):
+        for i in self.opaf_images:
+            if i.name == name:
+                return i
+
+        raise Exception("Image with name '" + name + "' not found")

@@ -1,4 +1,5 @@
 import opaf.lib.utils as Utils
+from opaf.lib.opaf_image import OPAFImage
 from opaf.lib.opaf_value import OPAFValue
 from opaf.lib.opaf_action import OPAFAction
 from opaf.lib.opaf_block import OPAFBlock

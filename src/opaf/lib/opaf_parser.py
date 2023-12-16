@@ -23,6 +23,7 @@ from opaf.lib import (
     OPAFBlock,
     OPAFComponent,
     OPAFDocument,
+    OPAFImage,
     OPAFValue,
     Utils
 )
@@ -77,6 +78,14 @@ class OPAFParser:
             value = OPAFValue.parse(element)
             self.opaf_doc.add_opaf_value(value)
 
+    def __parse_opaf_images(self, doc, dir):
+        root = doc.documentElement
+        elements = root.getElementsByTagNameNS(self.namespace, "define_image")
+
+        for element in elements:
+            image = OPAFImage.parse(element, dir)
+            self.opaf_doc.add_opaf_image(image)
+
     def __parse_opaf_actions(self, doc):
         root = doc.documentElement
         elements = root.getElementsByTagNameNS(self.namespace, "define_action")
@@ -116,6 +125,7 @@ class OPAFParser:
             inc_doc = xml.dom.minidom.parse(file_path)
             self.__parse_opaf_includes(inc_doc, os.path.dirname(file_path))
             self.__parse_opaf_values(inc_doc)
+            self.__parse_opaf_images(inc_doc, os.path.dirname(file_path))
             self.__parse_opaf_blocks(inc_doc)
             self.__parse_opaf_actions(inc_doc)
 
@@ -151,6 +161,7 @@ class OPAFParser:
         # Parse main file
         self.__parse_opaf_includes(doc, os.path.dirname(self.src_path))
         self.__parse_opaf_values(doc)
+        self.__parse_opaf_images(doc, os.path.dirname(self.src_path))
         self.__parse_opaf_actions(doc)
         self.__parse_opaf_blocks(doc)
         self.__parse_opaf_components(doc)
