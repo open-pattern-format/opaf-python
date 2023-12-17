@@ -237,3 +237,16 @@ def image_to_base64(img_path, size):
     b64_img = base64.b64encode(img_bytes)
 
     return b64_img.decode('ascii')
+
+def parse_arg_values(arg_vals):
+    values = {}
+
+    if arg_vals:
+        vals = arg_vals.split(',')
+
+        for v in vals:
+            if '=' in v:
+                v_arr = v.split('=')
+                values[v_arr[0]] = v_arr[1]
+
+    return values

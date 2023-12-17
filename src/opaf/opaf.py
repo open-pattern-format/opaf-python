@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--output', required=False, help='Output directory')
     parser.add_argument('--package', default=False, action='store_true', help='Create distributable OPAF file')
     parser.add_argument('--compile', default=False, action='store_true', help='Compile OPAF package')
+    parser.add_argument('--values', required=False, help='Values to use for compilation')
     parser.add_argument('--log_level', required=False, default='INFO', help='Log level (Default: INFO)')
 
     args = vars(parser.parse_args())
@@ -34,6 +35,7 @@ def main():
     output_path = args.get('output')
     package = args.get('package')
     compile = args.get('compile')
+    values = args.get('values')
     log_level = getattr(logging, args.get('log_level').upper(), None)
 
     # Logging
@@ -70,7 +72,10 @@ def main():
 
         if compile:
             if opaf_doc.pkg_version:
-                opaf_compiler = OPAFCompiler(opaf_doc)
+                # Parse custom values
+                custom_values = Utils.parse_arg_values(values)
+
+                opaf_compiler = OPAFCompiler(opaf_doc, custom_values)
                 compiled_pattern = opaf_compiler.compile()
 
                 # Write XML pattern file

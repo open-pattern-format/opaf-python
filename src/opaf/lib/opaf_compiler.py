@@ -24,16 +24,34 @@ class OPAFCompiler:
 
     __PROTECTED_ATTRS__ = ['xmlns:opaf', 'condition', 'name', 'repeat']
 
-    def __init__(self, doc):
+    def __init__(self, doc, values):
         self.opaf_doc = doc
         self.compiled_doc = xml.dom.minidom.Document()
+        self.custom_values = values
         self.global_values = {}
 
-    def __evaluate_global_values(self):
+    def __process_values(self):
         for v in self.opaf_doc.opaf_values:
             # Check condition
             if v.condition:
                 if not Utils.evaluate_condition(v.condition, self.global_values):
+                    continue
+
+            if v.config:
+                if v.name in self.custom_values:
+                    # Check allowed values
+                    if v.allowed_values:
+                        if not self.custom_values[v.name] in v.allowed_values:
+                            raise Exception(
+                                '"' +
+                                self.custom_values[v.name] +
+                                '" is not a valid value for "' +
+                                v.name +
+                                '". Allowed values are ' +
+                                str(v.allowed_values)
+                            )
+
+                    self.global_values[v.name] = Utils.str_to_num(self.custom_values[v.name])
                     continue
 
             self.global_values[v.name] = Utils.str_to_num(Utils.evaluate_expr(v.value, self.global_values))
@@ -223,7 +241,7 @@ class OPAFCompiler:
             raise Exception("OPAF document has not been packaged. Compilation aborted.")
         
         # Evaluate global values
-        self.__evaluate_global_values()
+        self.__process_values()
 
         # Set root element
         root_element = self.compiled_doc.createElement("pattern")
