@@ -24,11 +24,13 @@ class OPAFValue:
                  value,
                  config=False,
                  allowed_values=None,
+                 description=None,
                  condition=None):
         self.name = name
         self.value = value
         self.config = config
         self.allowed_values = allowed_values
+        self.description = description
         self.condition = condition
     
     def to_node(self):
@@ -40,6 +42,9 @@ class OPAFValue:
 
         if self.allowed_values:
             node.setAttribute('allowed_values', ','.join(self.allowed_values))
+
+        if self.description:
+            node.setAttribute("description", self.description)
 
         if self.condition:
             node.setAttribute("condition", self.condition)
@@ -77,9 +82,14 @@ class OPAFValue:
         if root_element.hasAttribute('allowed_values'):
             allowed_values = root_element.getAttribute('allowed_values').split(',')
 
+        # Description
+        description = None
+        if root_element.hasAttribute("description"):
+            description = root_element.getAttribute("description")
+
         # Condition
         condition = None
         if root_element.hasAttribute("condition"):
             condition = root_element.getAttribute("condition")
         
-        return OPAFValue(name, value, config, allowed_values, condition)
+        return OPAFValue(name, value, config, allowed_values, description, condition)
