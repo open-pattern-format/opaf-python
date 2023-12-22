@@ -121,6 +121,9 @@ class OPAFCompiler:
         new_element = self.compiled_doc.createElement('image')
         new_element.setAttribute('name', name)
 
+        if node.hasAttribute('tag'):
+            new_element.setAttribute('tag', node.getAttribute('tag'))
+
         if node.hasAttribute('caption'):
             new_element.setAttribute('caption', node.getAttribute('caption'))
 
