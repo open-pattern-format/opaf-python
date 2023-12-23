@@ -12,10 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import xml.etree.ElementTree as ET
-
-from math import *
-
 
 class OPAFDocument:
     def __init__(self):
@@ -32,8 +28,6 @@ class OPAFDocument:
         self.opaf_components = []
         self.opaf_metadata = None
 
-    #### Public Functions ###
-    
     def set_name(self, value):
         self.name = value
 
@@ -105,5 +99,3 @@ class OPAFDocument:
             self.opaf_metadata.elements += metadata.elements
         else:
             self.opaf_metadata = metadata
-
-

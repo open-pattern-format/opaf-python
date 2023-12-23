@@ -16,7 +16,6 @@ import xml.dom.minidom
 
 from xml.dom.minidom import parseString
 
-from opaf.lib import Utils
 from opaf.lib.metadata import MetadataUtils
 
 
@@ -27,7 +26,7 @@ class OPAFMetadata:
     def __init__(self,
                  elements=[]):
         self.elements = elements
-    
+
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__NAME__)
@@ -42,21 +41,27 @@ class OPAFMetadata:
     def parse(node):
         if not isinstance(node, xml.dom.minidom.Node):
             raise Exception("Unable to parse object of type " + node.__class__)
-        
+
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
-        
+
         if not node.nodeName == OPAFMetadata.__NAME__:
-            raise Exception("Expected node with name '" + OPAFMetadata.__NAME__ + "' and got '" + node.nodeName + "'")
+            raise Exception(
+                "Expected node with name '"
+                + OPAFMetadata.__NAME__
+                + "' and got '"
+                + node.nodeName
+                + "'"
+            )
 
         # Check metadata
         MetadataUtils.check_node(node)
 
         # Parse node element
         elements = []
-        
+
         # Elements
         for child in node.childNodes:
             elements.append(child.toxml())
-        
+
         return OPAFMetadata(elements)

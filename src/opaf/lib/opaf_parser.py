@@ -16,7 +16,6 @@ import glob
 import os
 import xml.dom.minidom
 from xml.parsers.expat import ExpatError
-from math import *
 
 from opaf.lib import (
     OPAFAction,
@@ -41,9 +40,8 @@ class OPAFParser:
         self.opaf_doc = OPAFDocument()
         self.opaf_doc.set_opaf_namespace(self.namespace)
 
-    
     def __check_doc(self, doc):
-        if doc == None:
+        if doc is None:
             raise Exception("Source document is not defined")
 
         # Check root node
@@ -118,7 +116,7 @@ class OPAFParser:
         for element in elements:
             component = OPAFComponent.parse(element)
             self.opaf_doc.add_opaf_component(component)
-    
+
     def __parse_opaf_includes(self, doc, dir):
         root = doc.documentElement
         elements = root.getElementsByTagName("opaf:include")
@@ -165,7 +163,7 @@ class OPAFParser:
         self.__parse_root(doc)
 
         # Parse standard libraries
-        if self.opaf_doc.pkg_version == None:
+        if self.opaf_doc.pkg_version is None:
             self.__parse_opaf_std_lib()
 
         # Parse main file

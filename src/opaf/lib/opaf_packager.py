@@ -14,11 +14,7 @@
 
 from importlib.metadata import version
 import xml.dom.minidom
-from xml.parsers.expat import ExpatError
-from math import *
 import uuid
-
-from opaf.lib import OPAFAction, OPAFDocument, Utils
 
 
 class OPAFPackager:
@@ -26,7 +22,7 @@ class OPAFPackager:
     def __init__(self, doc=None):
         self.opaf_doc = doc
         self.pkg_doc = xml.dom.minidom.Document()
-    
+
     def package(self):
         # Set root element
         root_element = self.pkg_doc.createElement("pattern")
@@ -36,19 +32,15 @@ class OPAFPackager:
 
         if not self.opaf_doc.unique_id:
             self.opaf_doc.set_unique_id(str(uuid.uuid4()))
-        
+
         root_element.setAttribute("unique_id", self.opaf_doc.unique_id)
 
         if not self.opaf_doc.version:
             self.opaf_doc.set_version('1.0')
-        
+
         root_element.setAttribute("version", self.opaf_doc.version)
 
         self.pkg_doc.appendChild(root_element)
-
-        # Images
-        for image in self.opaf_doc.opaf_images:
-            root_element.appendChild(image.to_node())
 
         # Metadata
         if self.opaf_doc.opaf_metadata:
@@ -69,5 +61,9 @@ class OPAFPackager:
         # Components
         for component in self.opaf_doc.opaf_components:
             root_element.appendChild(component.to_node())
+
+        # Images
+        for image in self.opaf_doc.opaf_images:
+            root_element.appendChild(image.to_node())
 
         return self.pkg_doc.toxml()

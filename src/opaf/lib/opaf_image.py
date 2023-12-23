@@ -29,14 +29,14 @@ class OPAFImage:
         self.name = name
         self.data = data
         self.condition = condition
-    
+
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
         node.setAttribute("name", self.name)
         node.setAttribute("data", self.data)
 
-        if not self.condition == None:
+        if self.condition is not None:
             node.setAttribute("condition", self.condition)
 
         return node
@@ -45,12 +45,18 @@ class OPAFImage:
     def parse(node, dir):
         if not isinstance(node, xml.dom.minidom.Node):
             raise Exception("Unable to parse object of type " + node.__class__)
-        
+
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
-        
+
         if not node.nodeName == OPAFImage.__DEFINE_NAME__:
-            raise Exception("Expected node with name '" + OPAFImage.__DEFINE_NAME__ + "' and got '" + node.nodeName + "'")
+            raise Exception(
+                "Expected node with name '"
+                + OPAFImage.__DEFINE_NAME__
+                + "' and got '"
+                + node.nodeName
+                + "'"
+            )
 
         # Parse node element
         root_element = node
@@ -71,7 +77,7 @@ class OPAFImage:
 
             if not img_path:
                 raise Exception("Image not found with uri： %s" % uri)
-            
+
             data = Utils.image_to_base64(img_path, size)
         else:
             data = root_element.getAttribute("data")
@@ -80,5 +86,5 @@ class OPAFImage:
         condition = None
         if root_element.hasAttribute("condition"):
             condition = root_element.getAttribute("condition")
-        
+
         return OPAFImage(name, data, condition)

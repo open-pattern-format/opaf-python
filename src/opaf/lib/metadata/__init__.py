@@ -1,1 +1,1 @@
-import opaf.lib.metadata.utils as MetadataUtils
+import opaf.lib.metadata.utils as MetadataUtils # noqa

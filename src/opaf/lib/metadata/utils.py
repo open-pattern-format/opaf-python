@@ -15,7 +15,6 @@
 import xml.dom.minidom
 
 
-
 SUPPORTED_NODES = [
     'color',
     'copyright',
@@ -52,18 +51,18 @@ def check_node(node):
     if not node.hasChildNodes():
         return node
 
-    for child in list(node.childNodes):        
+    for child in list(node.childNodes):
         if not child.nodeType == xml.dom.Node.ELEMENT_NODE:
             node.removeChild(child)
             continue
 
-        if not child.localName in SUPPORTED_NODES:
+        if child.localName not in SUPPORTED_NODES:
             raise Exception("Node with name '" + child.tagName + "' not recognized")
-        
+
         if child.localName in TEXT_NODES:
             continue
 
         if child.hasChildNodes():
             check_node(child)
-    
+
     return node

@@ -18,11 +18,11 @@ from xml.dom.minidom import parseString
 
 from opaf.lib import Utils
 
+
 class OPAFBlock:
 
     __NAME__ = "opaf:block"
     __DEFINE_NAME__ = "opaf:define_block"
-
 
     def __init__(self,
                  name,
@@ -32,7 +32,6 @@ class OPAFBlock:
         self.elements = elements
         self.params = params
 
-    
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
@@ -55,12 +54,18 @@ class OPAFBlock:
     def parse(node):
         if not isinstance(node, xml.dom.minidom.Node):
             raise Exception("Unable to parse object of type " + node.__class__)
-        
+
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
-        
+
         if not node.nodeName == OPAFBlock.__DEFINE_NAME__:
-            raise Exception("Expected node with name '" + OPAFBlock.__DEFINE_NAME__ + "' and got '" + node.nodeName + "'")
+            raise Exception(
+                "Expected node with name '"
+                + OPAFBlock.__DEFINE_NAME__
+                + "' and got '"
+                + node.nodeName
+                + "'"
+            )
 
         # Parse node element
         params = {}
@@ -80,12 +85,12 @@ class OPAFBlock:
                         params[param[0]] = param[1]
                     else:
                         params[param] = ''
-        
+
         # Elements
         Utils.check_node(node)
 
         for child in node.childNodes:
             child.setAttribute("xmlns:opaf", Utils.get_url('namespace'))
             elements.append(child.toxml())
-        
+
         return OPAFBlock(name, elements, params)

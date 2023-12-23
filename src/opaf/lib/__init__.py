@@ -1,12 +1,12 @@
-import opaf.lib.utils as Utils
-from opaf.lib.opaf_image import OPAFImage
-from opaf.lib.opaf_value import OPAFValue
-from opaf.lib.opaf_action import OPAFAction
-from opaf.lib.opaf_block import OPAFBlock
-from opaf.lib.opaf_metadata import OPAFMetadata
-from opaf.lib.opaf_component import OPAFComponent
-import opaf.lib.opaf_helpers as OPAFHelpers
-from opaf.lib.opaf_document import OPAFDocument
-from opaf.lib.opaf_compiler import OPAFCompiler
-from opaf.lib.opaf_packager import OPAFPackager
-from opaf.lib.opaf_parser import OPAFParser
+import opaf.lib.utils as Utils # noqa
+from opaf.lib.opaf_image import OPAFImage # noqa
+from opaf.lib.opaf_value import OPAFValue # noqa
+from opaf.lib.opaf_action import OPAFAction # noqa
+from opaf.lib.opaf_block import OPAFBlock # noqa
+from opaf.lib.opaf_metadata import OPAFMetadata # noqa
+from opaf.lib.opaf_component import OPAFComponent # noqa
+import opaf.lib.opaf_helpers as OPAFHelpers # noqa
+from opaf.lib.opaf_document import OPAFDocument # noqa
+from opaf.lib.opaf_compiler import OPAFCompiler # noqa
+from opaf.lib.opaf_packager import OPAFPackager # noqa
+from opaf.lib.opaf_parser import OPAFParser # noqa

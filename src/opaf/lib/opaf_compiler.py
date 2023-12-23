@@ -14,7 +14,6 @@
 
 import xml.dom.minidom
 
-from math import *
 from xml.dom.minidom import parseString
 
 from opaf.lib import OPAFHelpers, Utils
@@ -51,10 +50,18 @@ class OPAFCompiler:
                                 str(v.allowed_values)
                             )
 
-                    self.global_values[v.name] = Utils.str_to_num(self.custom_values[v.name])
+                    self.global_values[v.name] = Utils.str_to_num(
+                        self.custom_values[v.name]
+                    )
+
                     continue
 
-            self.global_values[v.name] = Utils.str_to_num(Utils.evaluate_expr(v.value, self.global_values))
+            self.global_values[v.name] = Utils.str_to_num(
+                Utils.evaluate_expr(
+                    v.value,
+                    self.global_values
+                )
+            )
 
     def __process_opaf_row_round(self, node, name, values):
         new_element = self.compiled_doc.createElement(name)
@@ -65,7 +72,7 @@ class OPAFCompiler:
                 attr = node.attributes.item(i)
 
                 # Check protected attributes
-                if not attr.name in self.__PROTECTED_ATTRS__:
+                if attr.name not in self.__PROTECTED_ATTRS__:
                     new_element.setAttribute(attr.name, attr.value)
 
         nodes = []
@@ -87,7 +94,7 @@ class OPAFCompiler:
 
         # Process parameters
         params = {}
-        
+
         for i in range(0, node.attributes.length):
             attr = node.attributes.item(i)
 
@@ -95,11 +102,17 @@ class OPAFCompiler:
             if attr.name in self.__PROTECTED_ATTRS__:
                 continue
 
-            params[attr.name] = Utils.str_to_num(Utils.evaluate_expr(attr.value, values), True)
+            params[attr.name] = Utils.str_to_num(
+                Utils.evaluate_expr(
+                    attr.value,
+                    values
+                ),
+                True
+            )
 
         # Get function
         helper = getattr(OPAFHelpers, name)
-        nodes =  helper(self.opaf_doc, params)
+        nodes = helper(self.opaf_doc, params)
 
         return nodes
 
@@ -136,13 +149,21 @@ class OPAFCompiler:
 
         # Repeat
         repeat = 1
-    
+
         if node.hasAttribute('repeat'):
-            repeat = int(Utils.str_to_num(Utils.evaluate_expr(node.getAttribute('repeat'), values), True))
+            repeat = int(
+                Utils.str_to_num(
+                    Utils.evaluate_expr(
+                        node.getAttribute('repeat'),
+                        values
+                    ),
+                    True
+                )
+            )
 
         # Process parameters
         params = block.params.copy()
-    
+
         for i in range(0, node.attributes.length):
             attr = node.attributes.item(i)
 
@@ -150,12 +171,24 @@ class OPAFCompiler:
             if attr.name in self.__PROTECTED_ATTRS__:
                 continue
 
-            params[attr.name] = Utils.str_to_num(Utils.evaluate_expr(attr.value, values), True)
-        
+            params[attr.name] = Utils.str_to_num(
+                Utils.evaluate_expr(
+                    attr.value,
+                    values
+                ),
+                True
+            )
+
         # Check parameters
         for p in params:
             if params[p] == '':
-                raise Exception('Parameter "' + p + '" is not defined for block "' + name + '"')
+                raise Exception(
+                    'Parameter "'
+                    + p
+                    + '" is not defined for block "'
+                    + name
+                    + '"'
+                )
 
         # Add default params
         params['repeat_total'] = repeat
@@ -170,9 +203,9 @@ class OPAFCompiler:
             for e in block.elements:
                 element = parseString(e).documentElement
                 nodes += self.__process_opaf_node(element, params)
-            
+
             node_arrays.append(nodes)
-        
+
         if Utils.contains_duplicates(node_arrays):
             sorted_nodes, repeats = Utils.sort_node_array(node_arrays)
 
@@ -185,7 +218,7 @@ class OPAFCompiler:
 
                     for n in na[0]:
                         repeat_element.appendChild(n)
-                    
+
                     node_arrays.append([repeat_element])
                 else:
                     node_arrays.append(na[0])
@@ -197,20 +230,20 @@ class OPAFCompiler:
             nodes += narr
 
         return nodes
-    
+
     def __process_opaf_node(self, node, values):
         compiled_nodes = []
 
         if Utils.evaluate_node_condition(node, values):
             if node.tagName == 'opaf:action':
                 compiled_nodes += self.__process_opaf_action(node, values)
-            
+
             elif node.tagName == 'opaf:block':
                 compiled_nodes += self.__process_opaf_block(node, values)
 
             elif node.tagName == 'opaf:round':
                 compiled_nodes += self.__process_opaf_row_round(node, 'round', values)
-                
+
             elif node.tagName == 'opaf:row':
                 compiled_nodes += self.__process_opaf_row_round(node, 'row', values)
 
@@ -221,7 +254,7 @@ class OPAFCompiler:
                 compiled_nodes += self.__process_opaf_image(node)
 
         return compiled_nodes
-        
+
     def __process_component(self, component):
         component_element = self.compiled_doc.createElement("component")
         component_element.setAttribute("name", component.name)
@@ -238,14 +271,13 @@ class OPAFCompiler:
 
         return component_element
 
-
     def compile(self):
         if not self.opaf_doc:
             raise Exception("OPAF document is not set. Nothing to compile")
 
         if not self.opaf_doc.pkg_version:
             raise Exception("OPAF document has not been packaged. Compilation aborted.")
-        
+
         # Evaluate global values
         self.__process_values()
 

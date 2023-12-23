@@ -14,10 +14,10 @@
 
 import xml.dom.minidom
 
+
 class OPAFValue:
 
     __DEFINE_NAME__ = "opaf:define_value"
-
 
     def __init__(self,
                  name,
@@ -32,7 +32,7 @@ class OPAFValue:
         self.allowed_values = allowed_values
         self.description = description
         self.condition = condition
-    
+
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
@@ -55,12 +55,18 @@ class OPAFValue:
     def parse(node):
         if not isinstance(node, xml.dom.minidom.Node):
             raise Exception("Unable to parse object of type " + node.__class__)
-        
+
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
-        
+
         if not node.nodeName == OPAFValue.__DEFINE_NAME__:
-            raise Exception("Expected node with name '" + OPAFValue.__DEFINE_NAME__ + "' and got '" + node.nodeName + "'")
+            raise Exception(
+                "Expected node with name '"
+                + OPAFValue.__DEFINE_NAME__
+                + "' and got '"
+                + node.nodeName
+                + "'"
+            )
 
         # Parse node element
         root_element = node
@@ -91,5 +97,5 @@ class OPAFValue:
         condition = None
         if root_element.hasAttribute("condition"):
             condition = root_element.getAttribute("condition")
-        
+
         return OPAFValue(name, value, config, allowed_values, description, condition)

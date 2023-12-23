@@ -19,6 +19,7 @@ from xml.dom.minidom import parseString
 
 from opaf.lib import Utils
 
+
 class OPAFComponent:
 
     __NAME__ = "opaf:component"
@@ -32,14 +33,14 @@ class OPAFComponent:
         self.uid = uid
         self.elements = elements
         self.condition = condition
-    
+
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__NAME__)
         node.setAttribute("name", self.name)
         node.setAttribute("unique_id", self.uid)
 
-        if not self.condition == None:
+        if self.condition is not None:
             node.setAttribute("condition", self.condition)
 
         for e in self.elements:
@@ -56,12 +57,18 @@ class OPAFComponent:
     def parse(node):
         if not isinstance(node, xml.dom.minidom.Node):
             raise Exception("Unable to parse object of type " + node.__class__)
-        
+
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
-        
+
         if not node.nodeName == OPAFComponent.__NAME__:
-            raise Exception("Expected node with name '" + OPAFComponent.__NAME__ + "' and got '" + node.nodeName + "'")
+            raise Exception(
+                "Expected node with name '"
+                + OPAFComponent.__NAME__
+                + "' and got '"
+                + node.nodeName
+                + "'"
+            )
 
         # Parse node element
         elements = []
@@ -82,9 +89,9 @@ class OPAFComponent:
 
         # Elements
         Utils.check_node(node)
-        
+
         for child in node.childNodes:
             child.setAttribute("xmlns:opaf", Utils.get_url('namespace'))
             elements.append(child.toxml())
-                
+
         return OPAFComponent(name, uid=uid, elements=elements, condition=condition)

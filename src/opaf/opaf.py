@@ -19,15 +19,43 @@ import os
 
 from opaf.lib import OPAFCompiler, OPAFPackager, OPAFParser, Utils
 
+
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description='Open Pattern Format (OPAF) Build Tool')
-    parser.add_argument('--input', required=True, help='Source file path (.opaf)')
-    parser.add_argument('--output', required=False, help='Output directory')
-    parser.add_argument('--package', default=False, action='store_true', help='Create distributable OPAF file')
-    parser.add_argument('--compile', default=False, action='store_true', help='Compile OPAF package')
-    parser.add_argument('--values', required=False, help='Values to use for compilation')
-    parser.add_argument('--log_level', required=False, default='INFO', help='Log level (Default: INFO)')
+    parser.add_argument(
+        '--input',
+        required=True,
+        help='Source file path (.opaf)'
+    )
+    parser.add_argument(
+        '--output',
+        required=False,
+        help='Output directory'
+    )
+    parser.add_argument(
+        '--package',
+        default=False,
+        action='store_true',
+        help='Create distributable OPAF file'
+    )
+    parser.add_argument(
+        '--compile',
+        default=False,
+        action='store_true',
+        help='Compile OPAF package'
+    )
+    parser.add_argument(
+        '--values',
+        required=False,
+        help='Values to use for compilation'
+    )
+    parser.add_argument(
+        '--log_level',
+        required=False,
+        default='INFO',
+        help='Log level (Default: INFO)'
+    )
 
     args = vars(parser.parse_args())
 
@@ -59,12 +87,16 @@ def main():
         opaf_doc = opaf_parser.parse()
 
         if package:
-            if opaf_doc.pkg_version == None:
+            if opaf_doc.pkg_version is None:
                 opaf_packager = OPAFPackager(opaf_doc)
                 opaf_pkg = opaf_packager.package()
 
                 # Write OPAF package file
-                pkg_name = os.path.splitext(input_path)[0] + "_" + opaf_doc.version + ".opafpkg"
+                pkg_name = (
+                    os.path.splitext(input_path)[0]
+                    + "_" + opaf_doc.version
+                    + ".opafpkg"
+                )
                 Utils.write_to_file(opaf_pkg, pkg_name)
             else:
                 logging.error("Input file is already packaged")
@@ -83,7 +115,10 @@ def main():
                     if not os.path.exists(output_path):
                         os.makedirs(output_path)
 
-                    Utils.write_to_file(compiled_pattern, output_path + '/' + opaf_doc.name + '.xml')
+                    Utils.write_to_file(
+                        compiled_pattern,
+                        output_path + '/' + opaf_doc.name + '.xml'
+                    )
 
                     # Extract images
                     for i in opaf_doc.opaf_images:
@@ -92,13 +127,16 @@ def main():
                 else:
                     print(compiled_pattern)
             else:
-                logging.error("Input file is not an OPAF package file. Compilation is not possible.")
+                logging.error(
+                    "Input file is not an OPAF package file. Compilation is not possible."
+                )
                 return -2
 
     except Exception as e:
         logging.error(e)
 
     return 0
-    
+
+
 if __name__ == '__main__':
     main()

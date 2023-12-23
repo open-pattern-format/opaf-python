@@ -23,7 +23,6 @@ class OPAFAction:
     __NAME__ = "opaf:action"
     __DEFINE_NAME__ = "opaf:define_action"
 
-
     def __init__(self,
                  name,
                  params={},
@@ -31,7 +30,7 @@ class OPAFAction:
         self.name = name
         self.params = params
         self.elements = elements
-    
+
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
@@ -50,12 +49,17 @@ class OPAFAction:
     def parse(node):
         if not isinstance(node, xml.dom.minidom.Node):
             raise Exception("Unable to parse object of type " + node.__class__)
-        
+
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
-        
+
         if not node.nodeName == OPAFAction.__DEFINE_NAME__:
-            raise Exception("Expected node with name '" + OPAFAction.__DEFINE_NAME__ + "' and got '" + node.nodeName + "'")
+            raise Exception(
+                "Expected node with name '"
+                + OPAFAction.__DEFINE_NAME__
+                + "' and got '" + node.nodeName
+                + "'"
+            )
 
         # Parse node element
         params = {}
@@ -75,12 +79,12 @@ class OPAFAction:
                         params[param[0]] = param[1]
                     else:
                         params[param] = ''
-        
+
         # Elements
         for child in node.childNodes:
             if not child.nodeType == xml.dom.Node.ELEMENT_NODE:
                 continue
 
             elements.append(child.toxml())
-        
+
         return OPAFAction(name, params, elements)

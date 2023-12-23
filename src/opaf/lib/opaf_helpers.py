@@ -14,10 +14,10 @@
 
 import copy
 import math
-import sys
 import xml
 
 from opaf.lib import Utils
+
 
 def __even_row(opaf_doc, params, offset=0):
     nodes = []
@@ -37,7 +37,12 @@ def __even_row(opaf_doc, params, offset=0):
     remainder = params['count'] % params['num']
     secondary_repeat = 0 if remainder == 0 else math.floor(remainder / 2)
     main_repeat = params['num'] - remainder - (1 if main_stitch_count > 0 else 0)
-    extra_stitches = params['count'] - (params['num'] * offset) - ((secondary_repeat * secondary_stitch_count) * 2) - (main_repeat * main_stitch_count)
+    extra_stitches = (
+        params['count']
+        - (params['num'] * offset)
+        - ((secondary_repeat * secondary_stitch_count) * 2)
+        - (main_repeat * main_stitch_count)
+    )
     extra_stitches_start = math.ceil(extra_stitches / 2)
     extra_stitches_end = math.floor(extra_stitches / 2)
 
@@ -56,7 +61,7 @@ def __even_row(opaf_doc, params, offset=0):
         tmp_params['count'] = secondary_stitch_count
         stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
 
-        if(secondary_repeat > 1):
+        if secondary_repeat > 1:
             repeat_element = doc.createElement("repeat")
             repeat_element.setAttribute("count", str(secondary_repeat))
 
@@ -79,17 +84,17 @@ def __even_row(opaf_doc, params, offset=0):
         tmp_params['count'] = main_stitch_count
         stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
 
-        if(main_repeat > 1):
+        if main_repeat > 1:
             repeat_element = doc.createElement("repeat")
             repeat_element.setAttribute("count", str(main_repeat))
-            
+
             for n in make_nodes:
                 repeat_element.appendChild(n)
 
             if main_stitch_count > 0:
                 for n in stitch_nodes:
                     repeat_element.appendChild(n)
-            
+
             nodes += [repeat_element.cloneNode(deep=True)]
         else:
             nodes += copy.deepcopy(make_nodes)
@@ -105,13 +110,13 @@ def __even_row(opaf_doc, params, offset=0):
         tmp_params['count'] = secondary_stitch_count
         stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
 
-        if(secondary_repeat > 1):
+        if secondary_repeat > 1:
             repeat_element = doc.createElement("repeat")
             repeat_element.setAttribute("count", str(secondary_repeat))
 
             for n in make_nodes:
                 repeat_element.appendChild(n)
-            
+
             for n in stitch_nodes:
                 repeat_element.appendChild(n)
 
@@ -132,6 +137,7 @@ def __even_row(opaf_doc, params, offset=0):
         nodes += copy.deepcopy(stitch_nodes)
 
     return nodes
+
 
 def __even_round(opaf_doc, params, offset=0):
     nodes = []
@@ -167,7 +173,7 @@ def __even_round(opaf_doc, params, offset=0):
 
             for n in stitch_nodes:
                 repeat_element.appendChild(n)
-            
+
             for n in make_nodes:
                 repeat_element.appendChild(n)
 
@@ -184,7 +190,7 @@ def __even_round(opaf_doc, params, offset=0):
         tmp_params['count'] = main_stitch_count
         stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
 
-        if(main_repeat > 1):
+        if main_repeat > 1:
             repeat_element = doc.createElement("repeat")
             repeat_element.setAttribute("count", str(main_repeat))
 
@@ -199,7 +205,7 @@ def __even_round(opaf_doc, params, offset=0):
         else:
             if main_stitch_count > 0:
                 nodes += copy.deepcopy(stitch_nodes)
-            
+
             nodes += copy.deepcopy(make_nodes)
 
     # Add last repeat
@@ -216,7 +222,7 @@ def __even_round(opaf_doc, params, offset=0):
 
             for n in stitch_nodes:
                 repeat_element.appendChild(n)
-            
+
             for n in make_nodes:
                 repeat_element.appendChild(n)
 
@@ -227,31 +233,40 @@ def __even_round(opaf_doc, params, offset=0):
 
     return nodes
 
-#
-# Public helpers
-#
 
 def increase_even_row(opaf_doc, params):
     supported_stitches = ["knit", "purl"]
     supported_actions = ["make_one", "make_one_purl", "yarn_over"]
 
     if 'count' not in params:
-        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'count' is not defined"
+        )
 
     if 'increase' not in params:
-        raise AttributeError("opaf helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
-    
+        raise AttributeError(
+            "opaf helper attribute 'increase' is not defined"
+        )
+
     params['num'] = params['increase']
 
     if 'stitch' in params:
         if not params['stitch'] in supported_stitches:
-            raise AttributeError("stitch with name '" + params['stitch'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "stitch with name '"
+                + params['stitch']
+                + "' is not supported"
+            )
     else:
         params['stitch'] = supported_stitches[0]
 
     if 'action' in params:
         if not params['action'] in supported_actions:
-            raise AttributeError("action with name '" + params['action'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "action with name '"
+                + params['action']
+                + "' is not supported"
+            )
     else:
         params['action'] = supported_actions[0]
 
@@ -259,27 +274,40 @@ def increase_even_row(opaf_doc, params):
 
     return nodes
 
+
 def decrease_even_row(opaf_doc, params):
     supported_stitches = ["knit", "purl"]
     supported_actions = ["knit_together", "purl_together", "slip_knit"]
 
     if 'count' not in params:
-        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'count' is not defined"
+        )
 
     if 'decrease' not in params:
-        raise AttributeError("opaf helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'decrease' is not defined"
+        )
 
     params['num'] = params['decrease']
 
     if 'stitch' in params:
         if not params['stitch'] in supported_stitches:
-            raise AttributeError("stitch with name '" + params['stitch'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "stitch with name '"
+                + params['stitch']
+                + "' is not supported"
+            )
     else:
         params['stitch'] = supported_stitches[0]
 
     if 'action' in params:
         if not params['action'] in supported_actions:
-            raise AttributeError("action with name '" + params['action'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "action with name '"
+                + params['action']
+                + "' is not supported"
+            )
     else:
         params['action'] = supported_actions[0]
 
@@ -287,27 +315,40 @@ def decrease_even_row(opaf_doc, params):
 
     return nodes
 
+
 def increase_even_round(opaf_doc, params):
     supported_stitches = ["knit", "purl"]
     supported_actions = ["make_one", "make_one_purl", "yarn_over"]
 
     if 'count' not in params:
-        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'count' is not defined"
+        )
 
     if 'increase' not in params:
-        raise AttributeError("opaf helper attribute 'increase' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'increase' is not defined"
+        )
 
     params['num'] = params['increase']
 
     if 'stitch' in params:
         if not params['stitch'] in supported_stitches:
-            raise AttributeError("stitch with name '" + params['stitch'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "stitch with name '"
+                + params['stitch']
+                + "' is not supported"
+            )
     else:
         params['stitch'] = supported_stitches[0]
 
     if 'action' in params:
         if not params['action'] in supported_actions:
-            raise AttributeError("action with name '" + params['action'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "action with name '"
+                + params['action']
+                + "' is not supported"
+            )
     else:
         params['action'] = supported_actions[0]
 
@@ -315,27 +356,40 @@ def increase_even_round(opaf_doc, params):
 
     return nodes
 
+
 def decrease_even_round(opaf_doc, params):
     supported_stitches = ["knit", "purl"]
     supported_actions = ["knit_together", "purl_together", "slip_knit"]
 
     if 'count' not in params:
-        raise AttributeError("opaf helper attribute 'count' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'count' is not defined"
+        )
 
     if 'decrease' not in params:
-        raise AttributeError("opaf helper attribute 'decrease' is not defined" + ", line %d" % (sys._getframe().f_lineno))
+        raise AttributeError(
+            "opaf helper attribute 'decrease' is not defined"
+        )
 
     params['num'] = params['decrease']
 
     if 'stitch' in params:
         if not params['stitch'] in supported_stitches:
-            raise AttributeError("stitch with name '" + params['stitch'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "stitch with name '"
+                + params['stitch']
+                + "' is not supported"
+            )
     else:
         params['stitch'] = supported_stitches[0]
 
     if 'action' in params:
         if not params['action'] in supported_actions:
-            raise AttributeError("action with name '" + params['action'] + "' is not supported" + ", line %d" % (sys._getframe().f_lineno))
+            raise AttributeError(
+                "action with name '"
+                + params['action']
+                + "' is not supported"
+            )
     else:
         params['action'] = supported_actions[0]
 
