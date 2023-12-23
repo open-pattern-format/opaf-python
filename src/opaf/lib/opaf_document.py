@@ -29,7 +29,7 @@ class OPAFDocument:
         self.opaf_metadata = None
 
     def set_name(self, value):
-        self.name = value
+        self.name = value.strip().replace(' ', '_').lower()
 
     def set_version(self, value):
         self.version = value
