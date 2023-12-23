@@ -102,7 +102,7 @@ class OPAFDocument:
 
     def add_opaf_metadata(self, metadata):
         if self.opaf_metadata:
-            self.opaf_metadata.elements.append(metadata.elements)
+            self.opaf_metadata.elements += metadata.elements
         else:
             self.opaf_metadata = metadata
 
