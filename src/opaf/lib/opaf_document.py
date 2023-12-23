@@ -30,6 +30,7 @@ class OPAFDocument:
         self.opaf_blocks = []
         self.opaf_actions = []
         self.opaf_components = []
+        self.opaf_metadata = None
 
     #### Public Functions ###
     
@@ -98,3 +99,11 @@ class OPAFDocument:
                 return i
 
         raise Exception("Image with name '" + name + "' not found")
+
+    def add_opaf_metadata(self, metadata):
+        if self.opaf_metadata:
+            self.opaf_metadata.elements.append(metadata.elements)
+        else:
+            self.opaf_metadata = metadata
+
+

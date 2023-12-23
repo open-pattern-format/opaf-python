@@ -3,6 +3,7 @@ from opaf.lib.opaf_image import OPAFImage
 from opaf.lib.opaf_value import OPAFValue
 from opaf.lib.opaf_action import OPAFAction
 from opaf.lib.opaf_block import OPAFBlock
+from opaf.lib.opaf_metadata import OPAFMetadata
 from opaf.lib.opaf_component import OPAFComponent
 import opaf.lib.opaf_helpers as OPAFHelpers
 from opaf.lib.opaf_document import OPAFDocument
