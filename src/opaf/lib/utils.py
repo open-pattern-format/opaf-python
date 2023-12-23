@@ -264,6 +264,6 @@ def parse_arg_values(arg_vals):
         for v in vals:
             if '=' in v:
                 v_arr = v.split('=')
-                values[v_arr[0]] = v_arr[1]
+                values[v_arr[0].strip()] = v_arr[1].strip()
 
     return values
