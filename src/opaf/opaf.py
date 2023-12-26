@@ -46,6 +46,12 @@ def main():
         help='Compile OPAF package'
     )
     parser.add_argument(
+        '--extract_images',
+        default=False,
+        action='store_true',
+        help='Extract images from OPAF package'
+    )
+    parser.add_argument(
         '--values',
         required=False,
         help='Values to use for compilation'
@@ -68,6 +74,7 @@ def main():
     output_path = args.get('output')
     package = args.get('package')
     compile = args.get('compile')
+    extract_images = args.get('extract_images')
     values = args.get('values')
     colors = args.get('colors')
     log_level = getattr(logging, args.get('log_level').upper(), None)
@@ -108,6 +115,28 @@ def main():
                 logging.error("Input file is already packaged")
                 return -2
 
+        if extract_images:
+            if opaf_doc.pkg_version:
+                # Check output directory
+                if output_path:
+                    if not os.path.exists(output_path):
+                        os.makedirs(output_path)
+                else:
+                    logging.error(
+                        "Output path is not specified."
+                    )
+                    return -2
+
+                # Extract images
+                for i in opaf_doc.opaf_images:
+                    with open(output_path + '/' + i.name + '.webp', "wb") as img_file:
+                        img_file.write(base64.b64decode(i.data))
+            else:
+                logging.error(
+                    "Input file is not an OPAF package file."
+                )
+                return -2
+
         if compile:
             if opaf_doc.pkg_version:
                 # Parse custom colors
@@ -135,11 +164,6 @@ def main():
                         + opaf_doc.name.strip().replace(' ', '_').lower()
                         + '.xml'
                     )
-
-                    # Extract images
-                    for i in opaf_doc.opaf_images:
-                        with open(output_path + '/' + i.name + '.webp', "wb") as img_file:
-                            img_file.write(base64.b64decode(i.data))
                 else:
                     print(compiled_pattern)
             else:
