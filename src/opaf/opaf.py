@@ -130,7 +130,10 @@ def main():
 
                     Utils.write_to_file(
                         compiled_pattern,
-                        output_path + '/' + opaf_doc.name + '.xml'
+                        output_path
+                        + '/'
+                        + opaf_doc.name.strip().replace(' ', '_').lower()
+                        + '.xml'
                     )
 
                     # Extract images
