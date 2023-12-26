@@ -87,6 +87,7 @@ class OPAFValue:
         allowed_values = []
         if root_element.hasAttribute('allowed_values'):
             allowed_values = root_element.getAttribute('allowed_values').split(',')
+            allowed_values = map(str.strip, allowed_values)
 
         # Description
         description = None

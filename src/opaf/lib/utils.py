@@ -271,6 +271,6 @@ def parse_arg_list(arg_list):
         for v in vals:
             if '=' in v:
                 v_arr = v.split('=')
-                values[v_arr[0].strip().lower()] = v_arr[1].strip()
+                values[v_arr[0].strip()] = v_arr[1].strip()
 
     return values

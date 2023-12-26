@@ -91,7 +91,7 @@ class OPAFColor:
         name = root_element.getAttribute('name')
 
         # Color
-        value = root_element.getAttribute('value').lower()
+        value = root_element.getAttribute('value').strip().lower()
         value = OPAFColor.to_hex(value)
 
         return OPAFColor(name, value)
