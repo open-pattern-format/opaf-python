@@ -23,13 +23,20 @@ def __even_row(opaf_doc, params, offset=0):
     nodes = []
     doc = xml.dom.minidom.Document()
 
-    # Get make action from document
-    make_action = copy.deepcopy(opaf_doc.get_opaf_action(params['action']))
+    # Get actions from document
+    make_action = opaf_doc.get_opaf_action(params['action'])
+    stitch_action = opaf_doc.get_opaf_action(params['stitch'])
+
+    # Create temp parameters to use for action evaluation
+    make_params = make_action.params.copy()
+    stitch_params = stitch_action.params.copy()
+
+    if 'color' in params:
+        make_params['color'] = params['color']
+        stitch_params['color'] = params['color']
 
     # Evaluate make action
-    tmp_params = copy.deepcopy(params)
-    del tmp_params['count']
-    make_nodes = Utils.evaluate_action_node(make_action, tmp_params)
+    make_nodes = Utils.evaluate_action_node(make_action, make_params)
 
     # Calculate knit count
     main_stitch_count = math.ceil(params['count'] / params['num']) - offset
@@ -48,18 +55,14 @@ def __even_row(opaf_doc, params, offset=0):
 
     # Add extra stitches at the start
     if extra_stitches_start > 0:
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = extra_stitches_start
-        nodes += Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = extra_stitches_start
+        nodes += Utils.evaluate_action_node(stitch_action, stitch_params)
 
     # Add first repeat
     if secondary_repeat > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = secondary_stitch_count
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = secondary_stitch_count
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         if secondary_repeat > 1:
             repeat_element = doc.createElement("repeat")
@@ -79,10 +82,8 @@ def __even_row(opaf_doc, params, offset=0):
     # Add main repeat
     if main_repeat > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = main_stitch_count
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = main_stitch_count
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         if main_repeat > 1:
             repeat_element = doc.createElement("repeat")
@@ -105,10 +106,8 @@ def __even_row(opaf_doc, params, offset=0):
     # Add final repeat
     if secondary_repeat > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = secondary_stitch_count
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = secondary_stitch_count
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         if secondary_repeat > 1:
             repeat_element = doc.createElement("repeat")
@@ -128,10 +127,8 @@ def __even_row(opaf_doc, params, offset=0):
     # Add extra stitches at the end
     if extra_stitches_end > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = extra_stitches_end
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = extra_stitches_end
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         nodes += copy.deepcopy(make_nodes)
         nodes += copy.deepcopy(stitch_nodes)
@@ -144,12 +141,18 @@ def __even_round(opaf_doc, params, offset=0):
     doc = xml.dom.minidom.Document()
 
     # Get actions from document
-    make_action = copy.deepcopy(opaf_doc.get_opaf_action(params['action']))
+    make_action = opaf_doc.get_opaf_action(params['action'])
+    stitch_action = opaf_doc.get_opaf_action(params['stitch'])
 
-    # Evaluate make action
-    tmp_params = copy.deepcopy(params)
-    del tmp_params['count']
-    make_nodes = Utils.evaluate_action_node(make_action, tmp_params)
+    # Create temp parameters to use for action evaluation
+    make_params = make_action.params.copy()
+    stitch_params = stitch_action.params.copy()
+
+    if 'color' in params:
+        make_params['color'] = params['color']
+        stitch_params['color'] = params['color']
+
+    make_nodes = Utils.evaluate_action_node(make_action, make_params)
 
     # Calculate knit count
     main_stitch_count = math.floor(params['count'] / params['num']) - offset
@@ -162,10 +165,8 @@ def __even_round(opaf_doc, params, offset=0):
     # Add first repeat
     if first_repeat > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = secondary_stitch_count
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = secondary_stitch_count
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         if first_repeat > 1:
             repeat_element = doc.createElement("repeat")
@@ -185,10 +186,8 @@ def __even_round(opaf_doc, params, offset=0):
     # Add main repeat
     if main_repeat > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = main_stitch_count
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = main_stitch_count
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         if main_repeat > 1:
             repeat_element = doc.createElement("repeat")
@@ -211,10 +210,8 @@ def __even_round(opaf_doc, params, offset=0):
     # Add last repeat
     if last_repeat > 0:
         # Evaluate stitch action
-        stitch_action = copy.deepcopy(opaf_doc.get_opaf_action(params['stitch']))
-        tmp_params = copy.deepcopy(params)
-        tmp_params['count'] = secondary_stitch_count
-        stitch_nodes = Utils.evaluate_action_node(stitch_action, tmp_params)
+        stitch_params['count'] = secondary_stitch_count
+        stitch_nodes = Utils.evaluate_action_node(stitch_action, stitch_params)
 
         if last_repeat > 1:
             repeat_element = doc.createElement("repeat")

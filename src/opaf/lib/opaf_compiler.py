@@ -16,17 +16,22 @@ import xml.dom.minidom
 
 from xml.dom.minidom import parseString
 
-from opaf.lib import OPAFHelpers, Utils
+from opaf.lib import (
+    OPAFColor,
+    OPAFHelpers,
+    Utils
+)
 
 
 class OPAFCompiler:
 
     __PROTECTED_ATTRS__ = ['xmlns:opaf', 'condition', 'name', 'repeat']
 
-    def __init__(self, doc, values):
+    def __init__(self, doc, values={}, colors={}):
         self.opaf_doc = doc
         self.compiled_doc = xml.dom.minidom.Document()
         self.custom_values = values
+        self.custom_colors = colors
         self.global_values = {}
 
     def __process_values(self):
@@ -62,6 +67,21 @@ class OPAFCompiler:
                     self.global_values
                 )
             )
+
+    def __process_colors(self, parent):
+        for c in self.opaf_doc.opaf_colors:
+            color_element = self.compiled_doc.createElement('color')
+            color_element.setAttribute('name', c.name)
+
+            # Determine value to use
+            value = c.value
+
+            if c.name in self.custom_colors:
+                value = OPAFColor.to_hex(self.custom_colors[c.name].lower())
+
+            color_element.setAttribute('value', value)
+
+            parent.appendChild(color_element)
 
     def __process_opaf_row_round(self, node, name, values):
         new_element = self.compiled_doc.createElement(name)
@@ -110,6 +130,9 @@ class OPAFCompiler:
                 True
             )
 
+        # Check params
+        Utils.validate_params(self.opaf_doc, params)
+
         # Get function
         helper = getattr(OPAFHelpers, name)
         nodes = helper(self.opaf_doc, params)
@@ -121,7 +144,37 @@ class OPAFCompiler:
         name = node.getAttribute('name')
         action = self.opaf_doc.get_opaf_action(name)
 
-        nodes = Utils.evaluate_action_node(action, values)
+        # Process parameters
+        params = action.params.copy()
+
+        for i in range(0, node.attributes.length):
+            attr = node.attributes.item(i)
+
+            # Check protected attributes
+            if attr.name in self.__PROTECTED_ATTRS__:
+                continue
+
+            params[attr.name] = Utils.str_to_num(
+                Utils.evaluate_expr(
+                    attr.value,
+                    values
+                ),
+                True
+            )
+
+        # Check parameters
+        for p in params:
+            if params[p] == '':
+                raise Exception(
+                    'Parameter "'
+                    + p
+                    + '" is not defined for action "'
+                    + name
+                    + '"'
+                )
+
+        Utils.validate_params(self.opaf_doc, params)
+        nodes = Utils.evaluate_action_node(action, params)
 
         return nodes
 
@@ -288,6 +341,9 @@ class OPAFCompiler:
         root_element.setAttribute("version", self.opaf_doc.version)
 
         self.compiled_doc.appendChild(root_element)
+
+        # Process colors
+        self.__process_colors(root_element)
 
         # Process components
         for component in self.opaf_doc.opaf_components:

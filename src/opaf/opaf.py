@@ -51,6 +51,11 @@ def main():
         help='Values to use for compilation'
     )
     parser.add_argument(
+        '--colors',
+        required=False,
+        help='Colors to use for compilation'
+    )
+    parser.add_argument(
         '--log_level',
         required=False,
         default='INFO',
@@ -64,6 +69,7 @@ def main():
     package = args.get('package')
     compile = args.get('compile')
     values = args.get('values')
+    colors = args.get('colors')
     log_level = getattr(logging, args.get('log_level').upper(), None)
 
     # Logging
@@ -104,10 +110,17 @@ def main():
 
         if compile:
             if opaf_doc.pkg_version:
-                # Parse custom values
-                custom_values = Utils.parse_arg_values(values)
+                # Parse custom colors
+                custom_colors = Utils.parse_arg_list(colors)
 
-                opaf_compiler = OPAFCompiler(opaf_doc, custom_values)
+                # Parse custom values
+                custom_values = Utils.parse_arg_list(values)
+
+                opaf_compiler = OPAFCompiler(
+                    opaf_doc,
+                    values=custom_values,
+                    colors=custom_colors
+                )
                 compiled_pattern = opaf_compiler.compile()
 
                 # Write XML pattern file

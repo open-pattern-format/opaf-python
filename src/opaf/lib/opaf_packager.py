@@ -46,6 +46,10 @@ class OPAFPackager:
         if self.opaf_doc.opaf_metadata:
             root_element.appendChild(self.opaf_doc.opaf_metadata.to_node())
 
+        # Colors
+        for color in self.opaf_doc.opaf_colors:
+            root_element.appendChild(color.to_node())
+
         # Actions
         for action in self.opaf_doc.opaf_actions:
             root_element.appendChild(action.to_node())

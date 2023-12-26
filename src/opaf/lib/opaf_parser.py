@@ -20,6 +20,7 @@ from xml.parsers.expat import ExpatError
 from opaf.lib import (
     OPAFAction,
     OPAFBlock,
+    OPAFColor,
     OPAFComponent,
     OPAFDocument,
     OPAFImage,
@@ -77,6 +78,14 @@ class OPAFParser:
             value = OPAFValue.parse(element)
             self.opaf_doc.add_opaf_value(value)
 
+    def __parse_opaf_colors(self, doc):
+        root = doc.documentElement
+        elements = root.getElementsByTagNameNS(self.namespace, "define_color")
+
+        for element in elements:
+            value = OPAFColor.parse(element)
+            self.opaf_doc.add_opaf_color(value)
+
     def __parse_opaf_images(self, doc, dir):
         root = doc.documentElement
         elements = root.getElementsByTagNameNS(self.namespace, "define_image")
@@ -131,6 +140,7 @@ class OPAFParser:
             # Recursively parse included OPAF files
             inc_doc = xml.dom.minidom.parse(file_path)
             self.__parse_opaf_includes(inc_doc, os.path.dirname(file_path))
+            self.__parse_opaf_colors(inc_doc)
             self.__parse_opaf_values(inc_doc)
             self.__parse_opaf_images(inc_doc, os.path.dirname(file_path))
             self.__parse_opaf_metadata(inc_doc)
@@ -168,6 +178,7 @@ class OPAFParser:
 
         # Parse main file
         self.__parse_opaf_includes(doc, os.path.dirname(self.src_path))
+        self.__parse_opaf_colors(doc)
         self.__parse_opaf_values(doc)
         self.__parse_opaf_images(doc, os.path.dirname(self.src_path))
         self.__parse_opaf_metadata(doc)

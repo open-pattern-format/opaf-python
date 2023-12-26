@@ -22,6 +22,7 @@ class OPAFDocument:
         self.opaf_namespace = None
         self.pkg_version = None
         self.opaf_values = []
+        self.opaf_colors = []
         self.opaf_images = []
         self.opaf_blocks = []
         self.opaf_actions = []
@@ -70,6 +71,14 @@ class OPAFDocument:
 
         self.opaf_actions.append(action)
 
+    def add_opaf_color(self, color):
+        # Check for duplicates
+        for c in self.opaf_colors:
+            if c.name == color.name:
+                raise Exception("Color with name '" + color.name + "' is already defined")
+
+        self.opaf_colors.append(color)
+
     def add_opaf_component(self, component):
         self.opaf_components.append(component)
 
@@ -86,6 +95,21 @@ class OPAFDocument:
                 return b
 
         raise Exception("Block with name '" + name + "' not found")
+
+    def get_opaf_color(self, name):
+        for c in self.opaf_colors:
+            if c.name == name:
+                return c
+
+        raise Exception("Color with name '" + name + "' not found")
+
+    def get_opaf_colors(self):
+        colors = {}
+
+        for c in self.opaf_colors:
+            colors[c.name] = c.value
+
+        return colors
 
     def get_opaf_image(self, name):
         for i in self.opaf_images:

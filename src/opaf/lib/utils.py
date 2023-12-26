@@ -31,6 +31,7 @@ from xml.dom.minidom import parseString
 SUPPORTED_NODES = [
     'define_action',
     'define_block',
+    'define_color',
     'define_image',
     'define_value',
     'action',
@@ -169,10 +170,16 @@ def evaluate_param_values(params, values):
     return params
 
 
-def evaluate_action_node(action, values):
-    # Process parameters
-    params = action.params | values
+def validate_params(doc, params):
+    # Check colors
+    if 'color' in params:
+        colors = doc.get_opaf_colors()
 
+        if params['color'] not in colors:
+            raise Exception('color "' + params['color'] + '" is not defined')
+
+
+def evaluate_action_node(action, values):
     # Process action elements
     nodes = []
 
@@ -181,7 +188,7 @@ def evaluate_action_node(action, values):
 
         for i in range(0, element.attributes.length):
             attr = element.attributes.item(i)
-            element.setAttribute(attr.name, evaluate_expr(attr.value, params))
+            element.setAttribute(attr.name, evaluate_expr(attr.value, values))
 
         nodes.append(element)
 
@@ -255,15 +262,15 @@ def image_to_base64(img_path, size):
     return b64_img.decode('ascii')
 
 
-def parse_arg_values(arg_vals):
+def parse_arg_list(arg_list):
     values = {}
 
-    if arg_vals:
-        vals = arg_vals.split(',')
+    if arg_list:
+        vals = arg_list.split(',')
 
         for v in vals:
             if '=' in v:
                 v_arr = v.split('=')
-                values[v_arr[0].strip()] = v_arr[1].strip()
+                values[v_arr[0].strip().lower()] = v_arr[1].strip()
 
     return values
