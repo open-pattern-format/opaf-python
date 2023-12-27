@@ -274,3 +274,13 @@ def parse_arg_list(arg_list):
                 values[v_arr[0].strip()] = v_arr[1].strip()
 
     return values
+
+
+def add_id_attribute(nodes, names, num):
+    for n in nodes:
+        if n.tagName in names:
+            num += 1
+            n.setAttribute('id', str(num))
+
+        if n.hasChildNodes:
+            add_id_attribute(n.childNodes, names, num)

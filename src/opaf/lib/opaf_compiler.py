@@ -322,6 +322,11 @@ class OPAFCompiler:
         for node in compiled_nodes:
             component_element.appendChild(node)
 
+        # Post-processing
+        if component_element.hasChildNodes:
+            # Add row/round ids
+            Utils.add_id_attribute(component_element.childNodes, ['row', 'round'], 0)
+
         return component_element
 
     def compile(self):
