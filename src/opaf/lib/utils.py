@@ -123,7 +123,7 @@ def params_to_str(params):
 
     for param in params:
         if params[param]:
-            param_strs.append(param + '=' + params[param])
+            param_strs.append(param + '=' + str(params[param]))
         else:
             param_strs.append(param)
 
@@ -185,6 +185,13 @@ def evaluate_action_node(action, values):
 
     for e in action.elements:
         element = parseString(e).documentElement
+
+        # Handle condition
+        if element.hasAttribute('condition'):
+            if not evaluate_condition(element.getAttribute('condition'), values):
+                continue
+
+            element.removeAttribute('condition')
 
         for i in range(0, element.attributes.length):
             attr = element.attributes.item(i)

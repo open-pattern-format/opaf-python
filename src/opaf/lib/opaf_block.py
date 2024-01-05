@@ -82,7 +82,7 @@ class OPAFBlock:
                 for param in params_attr.split(" "):
                     if '=' in param:
                         param = param.split('=')
-                        params[param[0]] = param[1]
+                        params[param[0]] = Utils.str_to_num(param[1])
                     else:
                         params[param] = ''
 

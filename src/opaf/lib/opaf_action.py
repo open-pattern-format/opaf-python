@@ -76,15 +76,14 @@ class OPAFAction:
                 for param in params_attr.split(" "):
                     if '=' in param:
                         param = param.split('=')
-                        params[param[0]] = param[1]
+                        params[param[0]] = Utils.str_to_num(param[1])
                     else:
                         params[param] = ''
 
         # Elements
-        for child in node.childNodes:
-            if not child.nodeType == xml.dom.Node.ELEMENT_NODE:
-                continue
+        actions = node.getElementsByTagName("action")
 
-            elements.append(child.toxml())
+        for action in actions:
+            elements.append(action.toxml())
 
         return OPAFAction(name, params, elements)

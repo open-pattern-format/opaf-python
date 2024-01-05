@@ -112,7 +112,7 @@ class OPAFParser:
 
     def __parse_opaf_blocks(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagName("opaf:define_block")
+        elements = root.getElementsByTagNameNS(self.namespace, "define_block")
 
         for element in elements:
             block = OPAFBlock.parse(element)

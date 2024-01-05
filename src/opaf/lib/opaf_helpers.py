@@ -274,7 +274,7 @@ def increase_even_row(opaf_doc, params):
 
 def decrease_even_row(opaf_doc, params):
     supported_stitches = ["knit", "purl"]
-    supported_actions = ["knit_together", "purl_together", "slip_knit"]
+    supported_actions = ["knit_together", "purl_together", "slip_knit", "slip_purl"]
 
     if 'count' not in params:
         raise AttributeError(
