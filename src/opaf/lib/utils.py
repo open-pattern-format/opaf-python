@@ -61,7 +61,7 @@ def parse_uri(uri, dirname):
     return result
 
 
-def str_to_num(str, round_num=False):
+def str_to_num(str):
     try:
         return int(str)
     except ValueError:
@@ -69,9 +69,6 @@ def str_to_num(str, round_num=False):
 
     try:
         val = float(str)
-
-        if round_num:
-            return round(val)
 
         return val
     except ValueError:
@@ -161,13 +158,6 @@ def evaluate_node_condition(node, values):
         return evaluate_condition(condition, values)
 
     return True
-
-
-def evaluate_param_values(params, values):
-    for p in params:
-        params[p] = str_to_num(evaluate_expr(params[p], values), True)
-
-    return params
 
 
 def validate_params(doc, params):

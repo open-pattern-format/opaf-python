@@ -51,8 +51,7 @@ class OPAFCompiler:
                                 self.custom_values[v.name] +
                                 '" is not a valid value for "' +
                                 v.name +
-                                '". Allowed values are ' +
-                                str(v.allowed_values)
+                                '"'
                             )
 
                     self.global_values[v.name] = Utils.str_to_num(
@@ -126,8 +125,7 @@ class OPAFCompiler:
                 Utils.evaluate_expr(
                     attr.value,
                     values
-                ),
-                True
+                )
             )
 
         # Check params
@@ -158,8 +156,7 @@ class OPAFCompiler:
                 Utils.evaluate_expr(
                     attr.value,
                     values
-                ),
-                True
+                )
             )
 
         # Check parameters
@@ -204,13 +201,14 @@ class OPAFCompiler:
         repeat = 1
 
         if node.hasAttribute('repeat'):
-            repeat = int(
-                Utils.str_to_num(
-                    Utils.evaluate_expr(
-                        node.getAttribute('repeat'),
-                        values
-                    ),
-                    True
+            repeat = round(
+                int(
+                    Utils.str_to_num(
+                        Utils.evaluate_expr(
+                            node.getAttribute('repeat'),
+                            values
+                        )
+                    )
                 )
             )
 
@@ -228,8 +226,7 @@ class OPAFCompiler:
                 Utils.evaluate_expr(
                     attr.value,
                     values
-                ),
-                True
+                )
             )
 
         # Check parameters

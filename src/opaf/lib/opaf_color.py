@@ -62,10 +62,7 @@ class OPAFColor:
         if value in OPAFColor.__HEX_COLORS__:
             return True
 
-        if hex_str.match(value):
-            return True
-
-        return False
+        return hex_str.match(value)
 
     @staticmethod
     def parse(node):

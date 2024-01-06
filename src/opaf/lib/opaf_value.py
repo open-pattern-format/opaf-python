@@ -68,35 +68,32 @@ class OPAFValue:
                 + "'"
             )
 
-        # Parse node element
-        root_element = node
-
         # Name
-        name = root_element.getAttribute("name")
+        name = node.getAttribute("name")
 
         # Value
-        value = root_element.getAttribute("value")
+        value = node.getAttribute("value")
 
         # Configurable
         config = False
 
-        if root_element.hasAttribute('config'):
-            config = bool(root_element.getAttribute('config'))
+        if node.hasAttribute('config'):
+            config = bool(node.getAttribute('config'))
 
         # Allowed Values
         allowed_values = []
-        if root_element.hasAttribute('allowed_values'):
-            allowed_values = root_element.getAttribute('allowed_values').split(',')
+        if node.hasAttribute('allowed_values'):
+            allowed_values = node.getAttribute('allowed_values').split(',')
             allowed_values = map(str.strip, allowed_values)
 
         # Description
         description = None
-        if root_element.hasAttribute("description"):
-            description = root_element.getAttribute("description")
+        if node.hasAttribute("description"):
+            description = node.getAttribute("description")
 
         # Condition
         condition = None
-        if root_element.hasAttribute("condition"):
-            condition = root_element.getAttribute("condition")
+        if node.hasAttribute("condition"):
+            condition = node.getAttribute("condition")
 
         return OPAFValue(name, value, config, allowed_values, description, condition)
