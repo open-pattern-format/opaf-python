@@ -6,7 +6,6 @@ from opaf.lib.opaf_action import OPAFAction # noqa
 from opaf.lib.opaf_block import OPAFBlock # noqa
 from opaf.lib.opaf_metadata import OPAFMetadata # noqa
 from opaf.lib.opaf_component import OPAFComponent # noqa
-import opaf.lib.opaf_helpers as OPAFHelpers # noqa
 from opaf.lib.opaf_document import OPAFDocument # noqa
 from opaf.lib.opaf_compiler import OPAFCompiler # noqa
 from opaf.lib.opaf_packager import OPAFPackager # noqa

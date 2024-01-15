@@ -37,7 +37,6 @@ SUPPORTED_NODES = [
     'action',
     'block',
     'component',
-    'helper',
     'image',
     'round',
     'row'

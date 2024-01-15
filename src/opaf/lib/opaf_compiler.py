@@ -18,7 +18,6 @@ from xml.dom.minidom import parseString
 
 from opaf.lib import (
     OPAFColor,
-    OPAFHelpers,
     Utils
 )
 
@@ -103,39 +102,6 @@ class OPAFCompiler:
             new_element.appendChild(n)
 
         return [new_element]
-
-    def __process_opaf_helper(self, node, values):
-        name = node.getAttribute("name")
-
-        # Check helper
-        if not hasattr(OPAFHelpers, name):
-            raise Exception('opaf helper "' + name + '" is not defined')
-
-        # Process parameters
-        params = {}
-
-        for i in range(0, node.attributes.length):
-            attr = node.attributes.item(i)
-
-            # Check protected attributes
-            if attr.name in self.__PROTECTED_ATTRS__:
-                continue
-
-            params[attr.name] = Utils.str_to_num(
-                Utils.evaluate_expr(
-                    attr.value,
-                    values
-                )
-            )
-
-        # Check params
-        Utils.validate_params(self.opaf_doc, params)
-
-        # Get function
-        helper = getattr(OPAFHelpers, name)
-        nodes = helper(self.opaf_doc, params)
-
-        return nodes
 
     def __process_opaf_action(self, node, values):
         # Get action object
@@ -296,9 +262,6 @@ class OPAFCompiler:
 
             elif node.tagName == 'opaf:row':
                 compiled_nodes += self.__process_opaf_row_round(node, 'row', values)
-
-            elif node.tagName == 'opaf:helper':
-                compiled_nodes += self.__process_opaf_helper(node, values)
 
             elif node.tagName == 'opaf:image':
                 compiled_nodes += self.__process_opaf_image(node)
