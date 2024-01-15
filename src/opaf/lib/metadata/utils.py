@@ -26,15 +26,14 @@ SUPPORTED_NODES = [
     'link',
     'measurement',
     'needles',
+    'note',
+    'notion',
     'published',
     'title',
     'schematic',
-    'section',
     'size',
-    'table',
     'tag',
     'technique',
-    'text',
     'yarn'
 ]
 
