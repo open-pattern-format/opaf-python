@@ -78,7 +78,7 @@ class OPAFValue:
         config = False
 
         if node.hasAttribute('config'):
-            config = bool(node.getAttribute('config'))
+            config = node.getAttribute('config').lower().capitalize() == 'True'
 
         # Allowed Values
         allowed_values = []

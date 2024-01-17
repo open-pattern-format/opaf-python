@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 import xml.dom.minidom
+import uuid
 
 from xml.dom.minidom import parseString
 
@@ -33,7 +34,7 @@ class OPAFCompiler:
         self.custom_colors = colors
         self.global_values = {}
 
-    def __process_values(self):
+    def __process_values(self, parent):
         for v in self.opaf_doc.opaf_values:
             # Check condition
             if v.condition:
@@ -41,6 +42,9 @@ class OPAFCompiler:
                     continue
 
             if v.config:
+                config_element = self.compiled_doc.createElement('config')
+                config_element.setAttribute('name', v.name)
+
                 if v.name in self.custom_values:
                     # Check allowed values
                     if v.allowed_values:
@@ -53,11 +57,17 @@ class OPAFCompiler:
                                 '"'
                             )
 
+                    config_element.setAttribute("value", self.custom_values[v.name])
+                    parent.appendChild(config_element)
+
                     self.global_values[v.name] = Utils.str_to_num(
                         self.custom_values[v.name]
                     )
 
                     continue
+                else:
+                    config_element.setAttribute("value", v.value)
+                    parent.appendChild(config_element)
 
             self.global_values[v.name] = Utils.str_to_num(
                 Utils.evaluate_expr(
@@ -289,23 +299,48 @@ class OPAFCompiler:
 
         return component_element
 
-    def compile(self):
+    def compile(self, name):
         if not self.opaf_doc:
             raise Exception("OPAF document is not set. Nothing to compile")
 
         if not self.opaf_doc.pkg_version:
             raise Exception("OPAF document has not been packaged. Compilation aborted.")
 
-        # Evaluate global values
-        self.__process_values()
-
         # Set root element
-        root_element = self.compiled_doc.createElement("pattern")
-        root_element.setAttribute("name", self.opaf_doc.name)
-        root_element.setAttribute("unique_id", self.opaf_doc.unique_id)
-        root_element.setAttribute("version", self.opaf_doc.version)
+        root_element = self.compiled_doc.createElement("project")
+        root_element.setAttribute("name", name)
+        root_element.setAttribute("unique_id", str(uuid.uuid4()))
 
         self.compiled_doc.appendChild(root_element)
+
+        # Images
+        if self.opaf_doc.opaf_images:
+            for i in self.opaf_doc.opaf_images:
+                image_element = self.compiled_doc.createElement("image")
+                image_element.setAttribute("name", i.name)
+                image_element.setAttribute("data", i.data)
+
+                root_element.appendChild(image_element)
+
+        # Pattern
+        pattern_element = self.compiled_doc.createElement("pattern")
+        pattern_element.setAttribute("unique_id", self.opaf_doc.unique_id)
+        pattern_element.setAttribute("version", self.opaf_doc.version)
+
+        # Metadata
+        if self.opaf_doc.opaf_metadata:
+            metadata_element = self.compiled_doc.createElement("metadata")
+
+            for e in self.opaf_doc.opaf_metadata.elements:
+                element = parseString(e).documentElement
+                metadata_element.appendChild(element)
+
+            pattern_element.appendChild(metadata_element)
+
+        root_element.appendChild(pattern_element)
+
+        # Evaluate global values
+        self.__process_values(root_element)
 
         # Process colors
         self.__process_colors(root_element)

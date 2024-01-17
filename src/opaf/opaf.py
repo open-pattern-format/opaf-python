@@ -41,9 +41,8 @@ def main():
     )
     parser.add_argument(
         '--compile',
-        default=False,
-        action='store_true',
-        help='Compile OPAF package'
+        required=False,
+        help='Compile OPAF project with given name'
     )
     parser.add_argument(
         '--extract_images',
@@ -150,7 +149,7 @@ def main():
                     values=custom_values,
                     colors=custom_colors
                 )
-                compiled_pattern = opaf_compiler.compile()
+                compiled_pattern = opaf_compiler.compile(compile)
 
                 # Write XML pattern file
                 if output_path:
@@ -161,8 +160,8 @@ def main():
                         compiled_pattern,
                         output_path
                         + '/'
-                        + opaf_doc.name.strip().replace(' ', '_').lower()
-                        + '.xml'
+                        + compile.strip().replace(' ', '_').lower()
+                        + '.opafproj'
                     )
                 else:
                     print(compiled_pattern)
