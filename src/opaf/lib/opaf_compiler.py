@@ -103,6 +103,10 @@ class OPAFCompiler:
                 if attr.name not in self.__PROTECTED_ATTRS__:
                     new_element.setAttribute(attr.name, attr.value)
 
+        # Set row side (default to RS)
+        if name == 'row' and not new_element.hasAttribute('side'):
+            new_element.setAttribute('side', 'RS')
+
         nodes = []
 
         for child in node.childNodes:
