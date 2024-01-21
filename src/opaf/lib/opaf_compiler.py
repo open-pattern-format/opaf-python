@@ -257,6 +257,17 @@ class OPAFCompiler:
 
         return nodes
 
+    def __process_opaf_text(self, node):
+        text_element = self.compiled_doc.createElement('text')
+
+        if node.hasAttribute('heading'):
+            text_element.setAttribute('heading', node.getAttribute('heading'))
+
+        if node.hasAttribute('body'):
+            text_element.setAttribute('body', node.getAttribute('body'))
+
+        return text_element
+
     def __process_opaf_node(self, node, values):
         compiled_nodes = []
 
@@ -275,6 +286,9 @@ class OPAFCompiler:
 
             elif node.tagName == 'opaf:image':
                 compiled_nodes += self.__process_opaf_image(node)
+
+            elif node.tagName == 'opaf:text':
+                compiled_nodes.append(self.__process_opaf_text(node))
 
         return compiled_nodes
 
@@ -325,6 +339,7 @@ class OPAFCompiler:
         # Pattern
         pattern_element = self.compiled_doc.createElement("pattern")
         pattern_element.setAttribute("unique_id", self.opaf_doc.unique_id)
+        pattern_element.setAttribute("name", self.opaf_doc.name)
         pattern_element.setAttribute("version", self.opaf_doc.version)
 
         # Metadata
