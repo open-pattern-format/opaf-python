@@ -261,14 +261,26 @@ class OPAFCompiler:
 
         return nodes
 
-    def __process_opaf_text(self, node):
+    def __process_opaf_text(self, node, values):
         text_element = self.compiled_doc.createElement('text')
 
         if node.hasAttribute('heading'):
-            text_element.setAttribute('heading', node.getAttribute('heading'))
+            text_element.setAttribute(
+                'heading',
+                Utils.evaluate_expr(
+                    node.getAttribute('heading'),
+                    values
+                )
+            )
 
         if node.hasAttribute('body'):
-            text_element.setAttribute('body', node.getAttribute('body'))
+            text_element.setAttribute(
+                'body',
+                Utils.evaluate_expr(
+                    node.getAttribute('body'),
+                    values
+                )
+            )
 
         return text_element
 
@@ -292,7 +304,7 @@ class OPAFCompiler:
                 compiled_nodes += self.__process_opaf_image(node)
 
             elif node.tagName == 'opaf:text':
-                compiled_nodes.append(self.__process_opaf_text(node))
+                compiled_nodes.append(self.__process_opaf_text(node, values))
 
         return compiled_nodes
 
