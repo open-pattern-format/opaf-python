@@ -280,4 +280,6 @@ def add_id_attribute(nodes, names, num):
             n.setAttribute('id', str(num))
 
         if n.hasChildNodes:
-            add_id_attribute(n.childNodes, names, num)
+            num = add_id_attribute(n.childNodes, names, num)
+
+    return num
