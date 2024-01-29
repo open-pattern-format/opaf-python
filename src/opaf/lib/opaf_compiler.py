@@ -91,8 +91,12 @@ class OPAFCompiler:
 
             parent.appendChild(color_element)
 
-    def __process_opaf_row_round(self, node, name, values):
+    def __process_opaf_row(self, node, name, values):
         new_element = self.compiled_doc.createElement(name)
+
+        # Check type attribute
+        if not node.hasAttribute('type'):
+            raise Exception("Row attribute 'type' is missing")
 
         # Copy attributes
         if node.hasAttributes():
@@ -102,10 +106,6 @@ class OPAFCompiler:
                 # Check protected attributes
                 if attr.name not in self.__PROTECTED_ATTRS__:
                     new_element.setAttribute(attr.name, attr.value)
-
-        # Set row side (default to RS)
-        if name == 'row' and not new_element.hasAttribute('side'):
-            new_element.setAttribute('side', 'RS')
 
         nodes = []
 
@@ -294,11 +294,8 @@ class OPAFCompiler:
             elif node.tagName == 'opaf:block':
                 compiled_nodes += self.__process_opaf_block(node, values)
 
-            elif node.tagName == 'opaf:round':
-                compiled_nodes += self.__process_opaf_row_round(node, 'round', values)
-
             elif node.tagName == 'opaf:row':
-                compiled_nodes += self.__process_opaf_row_round(node, 'row', values)
+                compiled_nodes += self.__process_opaf_row(node, 'row', values)
 
             elif node.tagName == 'opaf:image':
                 compiled_nodes += self.__process_opaf_image(node)
@@ -324,8 +321,8 @@ class OPAFCompiler:
 
         # Post-processing
         if component_element.hasChildNodes:
-            # Add row/round ids
-            Utils.add_id_attribute(component_element.childNodes, ['row', 'round'], 0)
+            # Add row IDs
+            Utils.add_id_attribute(component_element.childNodes, ['row'], 0)
 
         return component_element
 

@@ -38,7 +38,6 @@ SUPPORTED_NODES = [
     'block',
     'component',
     'image',
-    'round',
     'row',
     'text'
 ]
