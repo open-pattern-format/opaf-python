@@ -25,7 +25,12 @@ from opaf.lib import (
 
 class OPAFCompiler:
 
-    __PROTECTED_ATTRS__ = ['xmlns:opaf', 'condition', 'name', 'repeat']
+    __PROTECTED_ATTRS__ = [
+        'xmlns:opaf',
+        'condition',
+        'name',
+        'repeat',
+        'unworked']
 
     def __init__(self, doc, values={}, colors={}):
         self.opaf_doc = doc
@@ -91,8 +96,8 @@ class OPAFCompiler:
 
             parent.appendChild(color_element)
 
-    def __process_opaf_row(self, node, name, values):
-        new_element = self.compiled_doc.createElement(name)
+    def __process_opaf_row(self, node, values):
+        new_element = self.compiled_doc.createElement('row')
 
         # Check type attribute
         if not node.hasAttribute('type'):
@@ -105,7 +110,7 @@ class OPAFCompiler:
 
                 # Check protected attributes
                 if attr.name not in self.__PROTECTED_ATTRS__:
-                    new_element.setAttribute(attr.name, attr.value)
+                    new_element.setAttribute(attr.name, Utils.evaluate_expr(attr.value, values))
 
         nodes = []
 
@@ -114,6 +119,18 @@ class OPAFCompiler:
 
         for n in nodes:
             new_element.appendChild(n)
+
+        # Calculate row count
+        unworked = 0
+
+        if node.hasAttribute('unworked'):
+            unworked = int(Utils.evaluate_expr(node.getAttribute('unworked'), values))
+
+        count = Utils.get_stitch_count(nodes) + unworked
+
+        new_element.setAttribute('count', str(count))
+        values['prev_row_count'] = count
+        self.global_values['prev_row_count'] = count
 
         return [new_element]
 
@@ -221,6 +238,9 @@ class OPAFCompiler:
                 )
 
         # Add default params
+        if 'prev_row_count' in values:
+            params['prev_row_count'] = values['prev_row_count']
+
         params['repeat_total'] = repeat
 
         # Process elements the required number of times handling repeats
@@ -295,7 +315,7 @@ class OPAFCompiler:
                 compiled_nodes += self.__process_opaf_block(node, values)
 
             elif node.tagName == 'opaf:row':
-                compiled_nodes += self.__process_opaf_row(node, 'row', values)
+                compiled_nodes += self.__process_opaf_row(node, values)
 
             elif node.tagName == 'opaf:image':
                 compiled_nodes += self.__process_opaf_image(node)

@@ -282,3 +282,18 @@ def add_id_attribute(nodes, names, num):
             num = add_id_attribute(n.childNodes, names, num)
 
     return num
+
+def get_stitch_count(nodes):
+    count = 0
+
+    for n in nodes:
+        if n.tagName == 'action':
+            if n.hasAttribute('total'):
+                count += int(n.getAttribute('total'))
+
+        if n.tagName == 'repeat':
+            if n.hasAttribute('count'):
+                r_count = int(n.getAttribute('count'))
+                count += (r_count * get_stitch_count(n.childNodes))
+
+    return count
