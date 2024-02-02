@@ -19,13 +19,10 @@ import xml.dom.minidom
 
 from importlib.metadata import metadata
 from io import BytesIO
-from math import ( # noqa
-    ceil,
-    floor,
-    remainder
-)
 from PIL import Image
 from xml.dom.minidom import parseString
+
+from opaf.lib import OPAFFuncs
 
 
 SUPPORTED_NODES = [
@@ -129,9 +126,19 @@ def params_to_str(params):
 def evaluate_expr(expr, values):
     pattern = re.compile(r'[$][{](.*?)[}]', re.S)
 
+    context = {
+        "__builtins__": {},
+        "round": OPAFFuncs.round,
+        "floor": OPAFFuncs.floor,
+        "ceil": OPAFFuncs.ceil,
+        "less": OPAFFuncs.less,
+        "greater": OPAFFuncs.greater,
+        "equals": OPAFFuncs.equals,
+    }
+
     def eval_fn(obj):
         try:
-            result = eval(obj.group(1), None, values)
+            result = eval(obj.group(1), context, values)
         except Exception as e:
             raise Exception(
                 "Failed to evaluate: <%s>" % (obj.group(1)) + ", " + str(e)

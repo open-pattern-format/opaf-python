@@ -1,4 +1,5 @@
-import opaf.lib.utils as Utils # noqa
+import opaf.lib.opaf_funcs as OPAFFuncs # noqa
+import opaf.lib.opaf_utils as Utils # noqa
 from opaf.lib.opaf_image import OPAFImage # noqa
 from opaf.lib.opaf_value import OPAFValue # noqa
 from opaf.lib.opaf_color import OPAFColor # noqa

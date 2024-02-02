@@ -30,7 +30,8 @@ class OPAFCompiler:
         'condition',
         'name',
         'repeat',
-        'unworked']
+        'offset'
+    ]
 
     def __init__(self, doc, values={}, colors={}):
         self.opaf_doc = doc
@@ -121,12 +122,12 @@ class OPAFCompiler:
             new_element.appendChild(n)
 
         # Calculate row count
-        unworked = 0
+        offset = 0
 
-        if node.hasAttribute('unworked'):
-            unworked = int(Utils.evaluate_expr(node.getAttribute('unworked'), values))
+        if node.hasAttribute('offset'):
+            offset = int(Utils.evaluate_expr(node.getAttribute('offset'), values))
 
-        count = Utils.get_stitch_count(nodes) + unworked
+        count = Utils.get_stitch_count(nodes) + offset
 
         new_element.setAttribute('count', str(count))
         values['prev_row_count'] = count
