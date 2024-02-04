@@ -20,21 +20,26 @@ import math
 def round(num):
     return builtins.round(num)
 
+
 @staticmethod
 def floor(num):
     return math.floor(num)
+
 
 @staticmethod
 def ceil(num):
     return math.ceil(num)
 
+
 @staticmethod
 def less(num, test):
     return num < test
 
+
 @staticmethod
 def greater(num, test):
     return num > test
+
 
 @staticmethod
 def equals(val, values):
@@ -42,5 +47,5 @@ def equals(val, values):
         for v in values:
             if val == v:
                 return True
-    
+
     return val == values

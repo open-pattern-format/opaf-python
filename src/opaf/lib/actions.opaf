@@ -47,7 +47,7 @@
     <opaf:define_action name="knit_together" params="stitches=2 count=1 color=main tbl=false">
         <action name="k${stitches}tog" description="knit ${stitches} together" instruction="k${stitches}tog" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${tbl == 'false' and count == 1}" />
         <action name="k${stitches}tog" description="knit ${stitches} together" instruction="k${stitches}tog ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${tbl == 'false' and count != 1}" />
-        <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl"  stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${tbl == tTrue' and count == 1}" />
+        <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl"  stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${tbl == true' and count == 1}" />
         <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${tbl == 'true' and count != 1}" />
     </opaf:define_action>
 

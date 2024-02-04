@@ -290,6 +290,7 @@ def add_id_attribute(nodes, names, num):
 
     return num
 
+
 def get_stitch_count(nodes):
     count = 0
 

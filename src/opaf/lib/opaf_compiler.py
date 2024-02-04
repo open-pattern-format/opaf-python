@@ -111,7 +111,10 @@ class OPAFCompiler:
 
                 # Check protected attributes
                 if attr.name not in self.__PROTECTED_ATTRS__:
-                    new_element.setAttribute(attr.name, Utils.evaluate_expr(attr.value, values))
+                    new_element.setAttribute(
+                        attr.name,
+                        Utils.evaluate_expr(attr.value, values)
+                    )
 
         nodes = []
 
