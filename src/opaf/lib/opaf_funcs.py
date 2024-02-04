@@ -49,3 +49,23 @@ def equals(val, values):
                 return True
 
     return val == values
+
+
+@staticmethod
+def not_equals(val, values):
+    return not equals(val, values)
+
+
+@staticmethod
+def _and_(val1, val2):
+    return (val1 and val2)
+
+
+@staticmethod
+def _or_(val1, val2):
+    return (val1 or val2)
+
+
+@staticmethod
+def _not_(val):
+    return not val

@@ -128,12 +128,16 @@ def evaluate_expr(expr, values):
 
     context = {
         "__builtins__": {},
-        "round": OPAFFuncs.round,
-        "floor": OPAFFuncs.floor,
-        "ceil": OPAFFuncs.ceil,
-        "less": OPAFFuncs.less,
-        "greater": OPAFFuncs.greater,
-        "equals": OPAFFuncs.equals,
+        "ROUND": OPAFFuncs.round,
+        "FLOOR": OPAFFuncs.floor,
+        "CEIL": OPAFFuncs.ceil,
+        "LT": OPAFFuncs.less,
+        "GT": OPAFFuncs.greater,
+        "EQ": OPAFFuncs.equals,
+        "NEQ": OPAFFuncs.not_equals,
+        "AND": OPAFFuncs._and_,
+        "OR": OPAFFuncs._or_,
+        "NOT": OPAFFuncs._not_,
     }
 
     def eval_fn(obj):
