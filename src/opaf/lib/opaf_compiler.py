@@ -397,7 +397,7 @@ class OPAFCompiler:
         # Process components
         for component in self.opaf_doc.opaf_components:
             if component.condition:
-                if not self.__evaluate_condition(component.condition):
+                if not Utils.evaluate_condition(component.condition, self.global_values):
                     continue
 
             component_element = self.__process_component(component)
