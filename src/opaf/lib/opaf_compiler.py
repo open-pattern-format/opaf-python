@@ -130,7 +130,6 @@ class OPAFCompiler:
         count = Utils.get_stitch_count(nodes) + offset
 
         new_element.setAttribute('count', str(count))
-        values['prev_row_count'] = count
         self.global_values['prev_row_count'] = count
 
         return [new_element]
@@ -238,18 +237,19 @@ class OPAFCompiler:
                     + '"'
                 )
 
-        # Add default params
-        if 'prev_row_count' in values:
-            params['prev_row_count'] = values['prev_row_count']
-
         params['repeat_total'] = repeat
 
         # Process elements the required number of times handling repeats
         node_arrays = []
 
         for i in range(0, repeat):
-            nodes = []
+            # Add default params
+            if 'prev_row_count' in self.global_values:
+                params['prev_row_count'] = self.global_values['prev_row_count']
+
             params['repeat'] = i + 1
+
+            nodes = []
 
             for e in block.elements:
                 element = parseString(e).documentElement
