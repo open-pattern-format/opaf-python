@@ -20,6 +20,7 @@ from xml.parsers.expat import ExpatError
 from opaf.lib import (
     OPAFAction,
     OPAFBlock,
+    OPAFChart,
     OPAFColor,
     OPAFComponent,
     OPAFDocument,
@@ -110,6 +111,14 @@ class OPAFParser:
             action = OPAFAction.parse(element)
             self.opaf_doc.add_opaf_action(action)
 
+    def __parse_opaf_charts(self, doc):
+        root = doc.documentElement
+        elements = root.getElementsByTagNameNS(self.namespace, "define_chart")
+
+        for element in elements:
+            chart = OPAFChart.parse(element)
+            self.opaf_doc.add_opaf_chart(chart)
+
     def __parse_opaf_blocks(self, doc):
         root = doc.documentElement
         elements = root.getElementsByTagNameNS(self.namespace, "define_block")
@@ -144,8 +153,9 @@ class OPAFParser:
             self.__parse_opaf_values(inc_doc)
             self.__parse_opaf_images(inc_doc, os.path.dirname(file_path))
             self.__parse_opaf_metadata(inc_doc)
-            self.__parse_opaf_blocks(inc_doc)
             self.__parse_opaf_actions(inc_doc)
+            self.__parse_opaf_charts(inc_doc)
+            self.__parse_opaf_blocks(inc_doc)
 
     def __parse_opaf_std_lib(self):
         # Parse OPAF standard library
@@ -183,6 +193,7 @@ class OPAFParser:
         self.__parse_opaf_images(doc, os.path.dirname(self.src_path))
         self.__parse_opaf_metadata(doc)
         self.__parse_opaf_actions(doc)
+        self.__parse_opaf_charts(doc)
         self.__parse_opaf_blocks(doc)
         self.__parse_opaf_components(doc)
 

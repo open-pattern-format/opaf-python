@@ -28,13 +28,16 @@ from opaf.lib import OPAFFuncs
 SUPPORTED_NODES = [
     'define_action',
     'define_block',
+    'define_chart',
     'define_color',
     'define_image',
     'define_value',
     'action',
     'block',
+    'chart',
     'component',
     'image',
+    'repeat',
     'row',
     'text'
 ]
@@ -71,7 +74,7 @@ def str_to_num(str):
         return str
 
 
-def check_node(node):
+def check_node(node, allowed_nodes=[]):
     if not node.hasChildNodes():
         return node
 
@@ -86,8 +89,14 @@ def check_node(node):
         if child.localName not in SUPPORTED_NODES:
             raise Exception("Node with name '" + child.tagName + "' not recognized")
 
+        if len(allowed_nodes) > 0:
+            if child.localName not in allowed_nodes:
+                raise Exception(
+                    "Node with name '" + child.tagName + "' is not allowed in this scope"
+                )
+
         if child.hasChildNodes():
-            check_node(child)
+            check_node(child, allowed_nodes)
 
     return node
 
@@ -293,6 +302,15 @@ def add_id_attribute(nodes, names, num):
             num = add_id_attribute(n.childNodes, names, num)
 
     return num
+
+
+def add_chart_attribute(nodes, name, row):
+    for n in nodes:
+        if n.localName == 'action':
+            n.setAttribute('chart', name + ':' + str(row))
+
+        if n.hasChildNodes:
+            add_chart_attribute(n.childNodes, name, row)
 
 
 def get_stitch_count(nodes):

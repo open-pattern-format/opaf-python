@@ -192,6 +192,79 @@ class OPAFCompiler:
 
         return [new_element]
 
+    def __process_opaf_chart(self, node, values):
+        # Get chart object
+        name = node.getAttribute('name')
+        chart = self.opaf_doc.get_opaf_chart(name)
+
+        # Attributes
+        row_num = 0
+        repeat = 1
+
+        if node.hasAttribute('row'):
+            row_num = int(
+                Utils.str_to_num(
+                    Utils.evaluate_expr(
+                        node.getAttribute('row'),
+                        values
+                    )
+                )
+            )
+
+        if node.hasAttribute('repeat'):
+            repeat = round(
+                int(
+                    Utils.str_to_num(
+                        Utils.evaluate_expr(
+                            node.getAttribute('repeat'),
+                            values
+                        )
+                    )
+                )
+            )
+
+        nodes = []
+
+        # Choose specific row or all rows
+        if row_num > 0:
+            if len(chart.rows) >= row_num:
+                row = parseString(chart.rows[row_num - 1]).documentElement
+
+                for c in row.getElementsByTagName('opaf:action'):
+                    if c.getAttribute('name') == 'none':
+                        continue
+
+                    nodes += self.__process_opaf_node(c, values)
+
+                # Add chart reference to action
+                Utils.add_chart_attribute(nodes, name, row_num - 1)
+
+        else:
+            for i in range(len(chart.rows)):
+                row = parseString(chart.rows[i]).documentElement
+
+                # Remove irrelevant actions
+                for a in row.getElementsByTagName('opaf:action'):
+                    if a.getAttribute('name') == 'none':
+                        row.removeChild(a)
+
+                r_nodes = self.__process_opaf_node(row, values)
+
+                Utils.add_chart_attribute(r_nodes, name, i)
+                nodes += r_nodes
+
+        # Handle repeats
+        if repeat > 1 and len(nodes) > 0:
+            repeat_element = self.compiled_doc.createElement("repeat")
+            repeat_element.setAttribute("count", str(repeat))
+
+            for n in nodes:
+                repeat_element.appendChild(n)
+
+            return [repeat_element]
+        else:
+            return nodes
+
     def __process_opaf_block(self, node, values):
         # Get block object
         name = node.getAttribute('name')
@@ -318,6 +391,9 @@ class OPAFCompiler:
             elif node.tagName == 'opaf:block':
                 compiled_nodes += self.__process_opaf_block(node, values)
 
+            elif node.tagName == 'opaf:chart':
+                compiled_nodes += self.__process_opaf_chart(node, values)
+
             elif node.tagName == 'opaf:row':
                 compiled_nodes += self.__process_opaf_row(node, values)
 
@@ -396,6 +472,21 @@ class OPAFCompiler:
 
         # Process colors
         self.__process_colors(root_element)
+
+        # Process charts
+        for chart in self.opaf_doc.opaf_charts:
+            chart_nodes = []
+
+            chart_element = self.compiled_doc.createElement('chart')
+
+            for r in chart.rows:
+                row = parseString(r).documentElement
+                chart_nodes += self.__process_opaf_node(row, self.global_values)
+
+            for n in chart_nodes:
+                chart_element.appendChild(n)
+
+            root_element.appendChild(chart_element)
 
         # Process components
         for component in self.opaf_doc.opaf_components:

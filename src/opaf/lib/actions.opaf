@@ -28,40 +28,44 @@
         <action name="p tbl" description="purl through back loop" instruction="p${count} tbl" count="${count}" tbl="${tbl}" color="${color}" total="${count}" condition="${tbl == 'true'}" />
     </opaf:define_action>
 
-    <opaf:define_action name="left_cable" params="left right color=main">
-        <action name="${left}/${right} LC" description="slip ${left} stitches onto cable needle, hold in front, knit ${right}, knit ${left} from cable needle" instruction="${left}/${right} LC" left="${left}" right="${right}" color="${color}" total="${left + right}" />
+    <opaf:define_action name="left_cable" params="left=1 right=1 count=1 color=main">
+        <action name="${left}/${right} LC" description="slip ${left} stitches onto cable needle, hold in front, knit ${right}, knit ${left} from cable needle" instruction="${left}/${right} LC" left="${left}" right="${right}" count="${count}" color="${color}" total="${left + right}" condition="${count == 1}" />
+        <action name="${left}/${right} LC" description="slip ${left} stitches onto cable needle, hold in front, knit ${right}, knit ${left} from cable needle" instruction="${left}/${right} LC ${count} times" left="${left}" right="${right}" count="${count}" color="${color}" total="${(left + right) * count}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
-    <opaf:define_action name="right_cable" params="left right color=main">
-        <action name="${left}/${right} RC" description="slip ${right} stitches onto cable needle, hold in back, knit ${left}, knit ${right} from cable needle" instruction="${left}/${right} RC" left="${left}" right="${right}" color="${color}" total="${left + right}" />
+    <opaf:define_action name="right_cable" params="left=1 right=1 count=1 color=main">
+        <action name="${left}/${right} RC" description="slip ${right} stitches onto cable needle, hold in back, knit ${left}, knit ${right} from cable needle" instruction="${left}/${right} RC" left="${left}" right="${right}" count="${count}" color="${color}" total="${left + right}" condition="${count == 1}" />
+        <action name="${left}/${right} RC" description="slip ${right} stitches onto cable needle, hold in back, knit ${left}, knit ${right} from cable needle" instruction="${left}/${right} RC ${count} times" left="${left}" right="${right}" count="${count}" color="${color}" total="${(left + right) * count}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
-    <opaf:define_action name="left_purl_cable" params="left right color=main">
-        <action name="${left}/${right} LPC" description="slip ${left} stitches onto cable needle, hold in front, purl ${right}, knit ${left} from cable needle" instruction="${left}/${right} LPC" left="${left}" right="${right}" color="${color}" total="${left + right}" />
+    <opaf:define_action name="left_purl_cable" params="left=1 right=1 count=1 color=main">
+        <action name="${left}/${right} LPC" description="slip ${left} stitches onto cable needle, hold in front, purl ${right}, knit ${left} from cable needle" instruction="${left}/${right} LPC" left="${left}" right="${right}" count="${count}" color="${color}" total="${left + right}" condition="${count == 1}" />
+        <action name="${left}/${right} LPC" description="slip ${left} stitches onto cable needle, hold in front, purl ${right}, knit ${left} from cable needle" instruction="${left}/${right} LPC ${count} times" left="${left}" right="${right}" count="${count}" color="${color}" total="${(left + right) * count}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
-    <opaf:define_action name="right_purl_cable" params="left right color=main">
-        <action name="${left}/${right} RPC" description="slip ${right} stitches onto cable needle, hold in back, knit ${left}, purl ${right} from cable needle" instruction="${left}/${right} RPC" left="${left}" right="${right}" color="${color}" total="${left + right}" />
+    <opaf:define_action name="right_purl_cable" params="left=1 right=1 count=1 color=main">
+        <action name="${left}/${right} RPC" description="slip ${right} stitches onto cable needle, hold in back, knit ${left}, purl ${right} from cable needle" instruction="${left}/${right} RPC" left="${left}" right="${right}" count="${count}" color="${color}" total="${left + right}" condition="${count == 1}" />
+        <action name="${left}/${right} RPC" description="slip ${right} stitches onto cable needle, hold in back, knit ${left}, purl ${right} from cable needle" instruction="${left}/${right} RPC ${count} times" left="${left}" right="${right}" count="${count}" color="${color}" total="${(left + right) * count}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
     <opaf:define_action name="knit_together" params="stitches=2 count=1 color=main tbl=false">
-        <action name="k${stitches}tog" description="knit ${stitches} together" instruction="k${stitches}tog" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'false', count == 1)}" />
-        <action name="k${stitches}tog" description="knit ${stitches} together" instruction="k${stitches}tog ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'false', NOT(count == 1))}" />
-        <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl"  stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'true', count == 1)}" />
-        <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'true', NOT(count == 1))}" />
+        <action name="k${stitches}tog" description="knit ${stitches} together" instruction="k${stitches}tog" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'false', count == 1)}" />
+        <action name="k${stitches}tog" description="knit ${stitches} together" instruction="k${stitches}tog ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'false', NOT(count == 1))}" />
+        <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl"  stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'true', count == 1)}" />
+        <action name="k${stitches}tog tbl" description="knit ${stitches} together through back loop" instruction="k${stitches}tog tbl ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'true', NOT(count == 1))}" />
     </opaf:define_action>
 
     <opaf:define_action name="purl_together" params="stitches=2 count=1 color=main tbl=false">
-        <action name="p${stitches}tog" description="purl ${stitches} together" instruction="p${stitches}tog" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'false', count == 1)}" />
-        <action name="p${stitches}tog" description="purl ${stitches} together" instruction="p${stitches}tog ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'false', NOT(count == 1))}" />
-        <action name="p${stitches}tog tbl" description="purl ${stitches} together through back loop" instruction="p${stitches}tog tbl" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'true', count == 1)}" />
-        <action name="p${stitches}tog tbl" description="purl ${stitches} together through back loop" instruction="p${stitches}tog tbl ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="1" condition="${AND(tbl == 'true', NOT(count == 1))}" />
+        <action name="p${stitches}tog" description="purl ${stitches} together" instruction="p${stitches}tog" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'false', count == 1)}" />
+        <action name="p${stitches}tog" description="purl ${stitches} together" instruction="p${stitches}tog ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'false', NOT(count == 1))}" />
+        <action name="p${stitches}tog tbl" description="purl ${stitches} together through back loop" instruction="p${stitches}tog tbl" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'true', count == 1)}" />
+        <action name="p${stitches}tog tbl" description="purl ${stitches} together through back loop" instruction="p${stitches}tog tbl ${count} times" stitches="${stitches}" count="${count}" color="${color}" tbl="${tbl}" total="${count}" condition="${AND(tbl == 'true', NOT(count == 1))}" />
     </opaf:define_action>
 
     <opaf:define_action name="slip" params="count=1 color=main kwise=false wyif=false">
-        <action name="sl pwise wyib" description="slip purlwise with yarn in back" instruction="sl ${count} pwise wyib" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'false', wyif == 'false')}" />
-        <action name="sl pwise wyif" description="slip purlwise with yarn in front" instruction="sl ${count} pwise wyif" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'false', wyif == 'true')}" />
-        <action name="sl kwise wyib" description="slip knitwise with yarn in back" instruction="sl ${count} kwise wyib" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'true', wyif == 'false')}" />
+        <action name="sl" description="slip purlwise with yarn in back" instruction="sl ${count}" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'false', wyif == 'false')}" />
+        <action name="sl wyif" description="slip purlwise with yarn in front" instruction="sl ${count} wyif" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'false', wyif == 'true')}" />
+        <action name="sl kwise" description="slip knitwise with yarn in back" instruction="sl ${count} kwise" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'true', wyif == 'false')}" />
         <action name="sl kwise wyif" description="slip knitwise with yarn in front" instruction="sl ${count} kwise wyif" count="${count}" color="${color}" wyif="${wyif}" kwise="${kwise}" total="${count}" condition="${AND(kwise == 'true', wyif == 'true')}" />
     </opaf:define_action>
 
@@ -80,15 +84,17 @@
     </opaf:define_action>
 
     <opaf:define_action name="double_stitch" params="color=main">
-        <action name="ds" description="double stitch" instruction="ds" color="${color}" total="1" />
+        <action name="ds" description="double stitch" instruction="ds" count="1" color="${color}" total="1" />
     </opaf:define_action>
 
-    <opaf:define_action name="knit_double_stitch" params="color=main">
-        <action name="kds" description="knit double stitch" instruction="kds" color="${color}" total="1" />
+    <opaf:define_action name="knit_double_stitch" params="count=1 color=main">
+        <action name="kds" description="knit double stitch" instruction="kds" count="${count}" color="${color}" total="${count}" condition="${count == 1}" />
+        <action name="kds" description="knit double stitch" instruction="kds ${count} times" count="${count}" color="${color}" total="${count}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
-    <opaf:define_action name="purl_double_stitch" params="color=main">
-        <action name="pds" description="purl double stitch" instruction="pds" color="${color}" total="1" />
+    <opaf:define_action name="purl_double_stitch" params="count=1 color=main">
+        <action name="pds" description="purl double stitch" instruction="pds" count="${count}" color="${color}" total="${count}" condition="${count == 1}" />
+        <action name="pds" description="purl double stitch" instruction="pds ${count} times" count="${count}" color="${color}" total="${count}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
     <opaf:define_action name="cast_on" params="count=1 color=main type=preferred">
@@ -111,9 +117,9 @@
         </type>
     -->
     <opaf:define_action name="make_one" params="color=main type=preferred">
-        <action name="m1" description="make 1 knitwise" instruction="m1" type="${type}" color="${color}" total="1" condition="${type == 'preferred'}" />
-        <action name="m1l" description="make 1 left knitwise" instruction="m1l" type="${type}" color="${color}" total="1" condition="${type == 'left'}" />
-        <action name="m1r" description="make 1 right knitwise" instruction="m1r" type="${type}" color="${color}" total="1" condition="${type == 'left'}" />
+        <action name="m1" description="make 1 knitwise" instruction="m1" type="${type}" count="1" color="${color}" total="1" condition="${type == 'preferred'}" />
+        <action name="m1l" description="make 1 left knitwise" instruction="m1l" type="${type}" count="1" color="${color}" total="1" condition="${type == 'left'}" />
+        <action name="m1r" description="make 1 right knitwise" instruction="m1r" type="${type}" count="1" color="${color}" total="1" condition="${type == 'left'}" />
     </opaf:define_action>
 
     <!-- Make One Purl
@@ -124,9 +130,9 @@
         </type>
     -->
     <opaf:define_action name="make_one_purl" params="color=main type=preferred">
-        <action name="m1p" description="make 1 purlwise" instruction="m1p" type="${type}" color="${color}" total="1" condition="${type == 'preferred'}" />
-        <action name="m1lp" description="make 1 left purlwise" instruction="m1lp" type="${type}" color="${color}" total="1" condition="${type == 'left'}" />
-        <action name="m1rp" description="make 1 right purlwise" instruction="m1rp" type="${type}" color="${color}" total="1" condition="${type == 'left'}" />
+        <action name="m1p" description="make 1 purlwise" instruction="m1p" type="${type}" count="1" color="${color}" total="1" condition="${type == 'preferred'}" />
+        <action name="m1lp" description="make 1 left purlwise" instruction="m1lp" type="${type}" count="1" color="${color}" total="1" condition="${type == 'left'}" />
+        <action name="m1rp" description="make 1 right purlwise" instruction="m1rp" type="${type}" count="1" color="${color}" total="1" condition="${type == 'left'}" />
     </opaf:define_action>
 
     <opaf:define_action name="yarn_over" params="count=1 color=main">
@@ -156,6 +162,13 @@
 
     <opaf:define_action name="instruction" params="text">
         <action name="instruction" instruction="${text}" total="0" />
+    </opaf:define_action>
+
+    <!--
+        Special action used only for charting
+    -->
+    <opaf:define_action name="none" params="count=1">
+        <action name="none" instruction="" count="${count}" total="0" />
     </opaf:define_action>
 
 </actions>

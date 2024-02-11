@@ -58,6 +58,10 @@ class OPAFPackager:
         for value in self.opaf_doc.opaf_values:
             root_element.appendChild(value.to_node())
 
+        # Charts
+        for chart in self.opaf_doc.opaf_charts:
+            root_element.appendChild(chart.to_node())
+
         # Blocks
         for block in self.opaf_doc.opaf_blocks:
             root_element.appendChild(block.to_node())

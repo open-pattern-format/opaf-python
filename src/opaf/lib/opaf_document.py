@@ -24,6 +24,7 @@ class OPAFDocument:
         self.opaf_values = []
         self.opaf_colors = []
         self.opaf_images = []
+        self.opaf_charts = []
         self.opaf_blocks = []
         self.opaf_actions = []
         self.opaf_components = []
@@ -54,6 +55,14 @@ class OPAFDocument:
                 raise Exception("Image with name '" + image.name + "' already exists")
 
         self.opaf_images.append(image)
+
+    def add_opaf_chart(self, chart):
+        # Check for duplicates
+        for c in self.opaf_charts:
+            if c.name == chart.name:
+                raise Exception("Chart with name '" + chart.name + "' already exists")
+
+        self.opaf_charts.append(chart)
 
     def add_opaf_block(self, block):
         # Check for duplicates
@@ -95,6 +104,13 @@ class OPAFDocument:
                 return b
 
         raise Exception("Block with name '" + name + "' not found")
+
+    def get_opaf_chart(self, name):
+        for c in self.opaf_charts:
+            if c.name == name:
+                return c
+
+        raise Exception("Chart with name '" + name + "' not found")
 
     def get_opaf_color(self, name):
         for c in self.opaf_colors:

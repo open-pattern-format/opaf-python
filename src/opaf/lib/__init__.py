@@ -5,6 +5,7 @@ from opaf.lib.opaf_value import OPAFValue # noqa
 from opaf.lib.opaf_color import OPAFColor # noqa
 from opaf.lib.opaf_action import OPAFAction # noqa
 from opaf.lib.opaf_block import OPAFBlock # noqa
+from opaf.lib.opaf_chart import OPAFChart # noqa
 from opaf.lib.opaf_metadata import OPAFMetadata # noqa
 from opaf.lib.opaf_component import OPAFComponent # noqa
 from opaf.lib.opaf_document import OPAFDocument # noqa
