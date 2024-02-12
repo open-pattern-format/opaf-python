@@ -147,6 +147,7 @@ def evaluate_expr(expr, values):
         "AND": OPAFFuncs._and_,
         "OR": OPAFFuncs._or_,
         "NOT": OPAFFuncs._not_,
+        "ABS": OPAFFuncs._abs_,
     }
 
     def eval_fn(obj):

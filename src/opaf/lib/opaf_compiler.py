@@ -30,7 +30,6 @@ class OPAFCompiler:
         'condition',
         'name',
         'repeat',
-        'offset'
     ]
 
     def __init__(self, doc, values={}, colors={}):
@@ -108,6 +107,10 @@ class OPAFCompiler:
         if node.hasAttributes():
             for i in range(0, node.attributes.length):
                 attr = node.attributes.item(i)
+
+                # Check for row specific attributes
+                if attr.name == 'offset':
+                    continue
 
                 # Check protected attributes
                 if attr.name not in self.__PROTECTED_ATTRS__:

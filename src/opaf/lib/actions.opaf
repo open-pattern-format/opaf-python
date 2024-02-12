@@ -160,8 +160,21 @@
         <action name="pfbf" description="purl front back front" instruction="pfbf ${count} times" count="${count}" color="${color}" total="${count * 3}" condition="${NOT(count == 1)}" />
     </opaf:define_action>
 
+    <!--
+        Text only instructions
+    -->
     <opaf:define_action name="instruction" params="text">
         <action name="instruction" instruction="${text}" total="0" />
+    </opaf:define_action>
+
+    <opaf:define_action name="place_marker" params="">
+        <action name="pm" description="place marker" instruction="pm" count="1" total="0" />
+    </opaf:define_action>
+
+    <opaf:define_action name="to_marker" params="offset=0">
+        <action name="tm" description="to marker" instruction="to marker" count="1" total="0" condition="${offset == 0}" />
+        <action name="tm" description="to ${ABS(offset)} before marker" instruction="to ${ABS(offset)} before marker" count="1" total="0" condition="${LT(offset, 0)}" />
+        <action name="tm" description="to ${offset} after marker" instruction="to ${offset} after marker" count="1" total="0" condition="${GT(offset, 0)}" />
     </opaf:define_action>
 
     <!--

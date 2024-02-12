@@ -40,6 +40,9 @@ def less(num, test):
 def greater(num, test):
     return num > test
 
+@staticmethod
+def _abs_(num):
+    return abs(num)
 
 @staticmethod
 def equals(val, values):
