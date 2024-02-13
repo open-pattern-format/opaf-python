@@ -40,9 +40,11 @@ def less(num, test):
 def greater(num, test):
     return num > test
 
+
 @staticmethod
 def _abs_(num):
     return abs(num)
+
 
 @staticmethod
 def equals(val, values):
@@ -72,3 +74,33 @@ def _or_(val1, val2):
 @staticmethod
 def _not_(val):
     return not val
+
+
+@staticmethod
+def choose(index, values):
+    if index < 1:
+        raise Exception("Index must be 1 or greater for 'CHOOSE' function")
+
+    if len(values) < index:
+        raise Exception(
+            "Index "
+            + str(index)
+            + " is out of range. Expected an index between 1 and "
+            + str(len(values))
+        )
+
+    return values[index - 1]
+
+
+@staticmethod
+def loop_choose(index, values):
+    if index < 1:
+        raise Exception("Index must be 1 or greater for 'LCHOOSE' function")
+
+    # Loop index
+    index = index % len(values)
+
+    if index == 0:
+        index = len(values)
+
+    return values[index - 1]

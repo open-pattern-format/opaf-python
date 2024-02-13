@@ -148,6 +148,8 @@ def evaluate_expr(expr, values):
         "OR": OPAFFuncs._or_,
         "NOT": OPAFFuncs._not_,
         "ABS": OPAFFuncs._abs_,
+        "CHOOSE": OPAFFuncs.choose,
+        "LCHOOSE": OPAFFuncs.loop_choose,
     }
 
     def eval_fn(obj):
