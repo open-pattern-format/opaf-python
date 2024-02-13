@@ -364,20 +364,11 @@ class OPAFCompiler:
     def __process_opaf_text(self, node, values):
         text_element = self.compiled_doc.createElement('text')
 
-        if node.hasAttribute('heading'):
+        if node.hasAttribute('data'):
             text_element.setAttribute(
-                'heading',
+                'data',
                 Utils.evaluate_expr(
-                    node.getAttribute('heading'),
-                    values
-                )
-            )
-
-        if node.hasAttribute('body'):
-            text_element.setAttribute(
-                'body',
-                Utils.evaluate_expr(
-                    node.getAttribute('body'),
+                    node.getAttribute('data'),
                     values
                 )
             )
