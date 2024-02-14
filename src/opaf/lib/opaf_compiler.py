@@ -103,6 +103,13 @@ class OPAFCompiler:
         if not node.hasAttribute('type'):
             raise Exception("Row attribute 'type' is missing")
 
+        # Add default params
+        if 'opaf_prev_row_count' in self.global_values:
+            values['opaf_prev_row_count'] = self.global_values['opaf_prev_row_count']
+
+        if 'opaf_prev_row_offset' in self.global_values:
+            values['opaf_prev_row_offset'] = self.global_values['opaf_prev_row_offset']
+
         # Copy attributes
         if node.hasAttributes():
             for i in range(0, node.attributes.length):
@@ -136,7 +143,8 @@ class OPAFCompiler:
         count = Utils.get_stitch_count(nodes) + offset
 
         new_element.setAttribute('count', str(count))
-        self.global_values['prev_row_count'] = count
+        self.global_values['opaf_prev_row_count'] = count
+        self.global_values['opaf_prev_row_offset'] = offset
 
         return [new_element]
 
@@ -323,9 +331,6 @@ class OPAFCompiler:
 
         for i in range(0, repeat):
             # Add default params
-            if 'prev_row_count' in self.global_values:
-                params['prev_row_count'] = self.global_values['prev_row_count']
-
             params['repeat'] = i + 1
 
             nodes = []
