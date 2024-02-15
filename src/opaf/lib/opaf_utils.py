@@ -138,6 +138,7 @@ def evaluate_expr(expr, values):
     context = {
         "__builtins__": {},
         "ROUND": OPAFFuncs.round,
+        "MROUND": OPAFFuncs.mround,
         "FLOOR": OPAFFuncs.floor,
         "CEIL": OPAFFuncs.ceil,
         "LT": OPAFFuncs.less,

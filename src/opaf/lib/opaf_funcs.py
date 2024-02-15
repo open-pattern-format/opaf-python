@@ -22,13 +22,18 @@ def round(num):
 
 
 @staticmethod
-def floor(num):
-    return math.floor(num)
+def mround(num, multiple=1):
+    return multiple * builtins.round(num / multiple)
 
 
 @staticmethod
-def ceil(num):
-    return math.ceil(num)
+def floor(num, multiple=1):
+    return multiple * math.floor(num / multiple)
+
+
+@staticmethod
+def ceil(num, multiple=1):
+    return multiple * math.ceil(num / multiple)
 
 
 @staticmethod
