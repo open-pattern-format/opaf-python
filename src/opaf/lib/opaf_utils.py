@@ -150,6 +150,7 @@ def evaluate_expr(expr, values):
         "ABS": OPAFFuncs._abs_,
         "CHOOSE": OPAFFuncs.choose,
         "LCHOOSE": OPAFFuncs.loop_choose,
+        "ISEMPTY": OPAFFuncs.is_empty,
     }
 
     def eval_fn(obj):

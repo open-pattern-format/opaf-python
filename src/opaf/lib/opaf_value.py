@@ -23,12 +23,14 @@ class OPAFValue:
                  name,
                  value,
                  config=False,
+                 required=False,
                  allowed_values=None,
                  description=None,
                  condition=None):
         self.name = name
         self.value = value
         self.config = config
+        self.required = required
         self.allowed_values = allowed_values
         self.description = description
         self.condition = condition
@@ -38,7 +40,8 @@ class OPAFValue:
         node = doc.createElement(self.__DEFINE_NAME__)
         node.setAttribute("name", self.name)
         node.setAttribute("value", self.value)
-        node.setAttribute('config', str(self.config))
+        node.setAttribute('config', str(self.config).lower())
+        node.setAttribute('required', str(self.required).lower())
 
         if self.allowed_values:
             node.setAttribute('allowed_values', ','.join(self.allowed_values))
@@ -78,7 +81,13 @@ class OPAFValue:
         config = False
 
         if node.hasAttribute('config'):
-            config = node.getAttribute('config').lower().capitalize() == 'True'
+            config = node.getAttribute('config').lower() == 'true'
+
+        # Required
+        required = False
+
+        if node.hasAttribute('required'):
+            required = node.getAttribute('required').lower() == 'true'
 
         # Allowed Values
         allowed_values = []
@@ -96,4 +105,12 @@ class OPAFValue:
         if node.hasAttribute("condition"):
             condition = node.getAttribute("condition")
 
-        return OPAFValue(name, value, config, allowed_values, description, condition)
+        return OPAFValue(
+            name,
+            value,
+            config,
+            required,
+            allowed_values,
+            description,
+            condition
+        )

@@ -104,3 +104,8 @@ def loop_choose(index, values):
         index = len(values)
 
     return values[index - 1]
+
+
+@staticmethod
+def is_empty(val):
+    return str(val) == ''
