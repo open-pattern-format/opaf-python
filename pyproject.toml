@@ -12,11 +12,14 @@ authors = [
 maintainers = [
   {name = "Scott Ware"}
 ]
+dependencies = [
+  "pillow >= 10.2.0",
+]
 
 [project.urls]
-homepage = "https://github.com/open-pattern-format/opaf"
-documentation = "https://github.com/open-pattern-format/opaf/wiki"
-repository = "https://github.com/open-pattern-format/opaf"
+homepage = "https://github.com/open-pattern-format/opaf-python"
+documentation = "https://github.com/open-pattern-format/opaf-python/wiki"
+repository = "https://github.com/open-pattern-format/opaf-python"
 namespace = "https://github.com/open-pattern-format/opaf/wiki"
 
 [project.scripts]
