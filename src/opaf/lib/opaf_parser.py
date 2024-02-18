@@ -12,7 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import glob
 import os
 import xml.dom.minidom
 from xml.parsers.expat import ExpatError
@@ -157,18 +156,6 @@ class OPAFParser:
             self.__parse_opaf_charts(inc_doc)
             self.__parse_opaf_blocks(inc_doc)
 
-    def __parse_opaf_std_lib(self):
-        # Parse OPAF standard library
-        lib_path = os.path.realpath(os.path.dirname(__file__))
-        common_opaf_paths = glob.glob(lib_path + "/" + "*.opaf")
-
-        for opaf_path in common_opaf_paths:
-            doc = xml.dom.minidom.parse(opaf_path)
-            self.__parse_opaf_includes(doc, lib_path)
-            self.__parse_opaf_values(doc)
-            self.__parse_opaf_actions(doc)
-            self.__parse_opaf_blocks(doc)
-
     def parse(self):
         # Parse input file
         try:
@@ -181,10 +168,6 @@ class OPAFParser:
 
         # Parse root pattern element
         self.__parse_root(doc)
-
-        # Parse standard libraries
-        if self.opaf_doc.pkg_version is None:
-            self.__parse_opaf_std_lib()
 
         # Parse main file
         self.__parse_opaf_includes(doc, os.path.dirname(self.src_path))
