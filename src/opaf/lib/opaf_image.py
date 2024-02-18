@@ -12,7 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import base64
 import xml.dom.minidom
+
+from io import BytesIO
+from PIL import Image
 
 from opaf.lib import Utils
 
@@ -32,7 +36,7 @@ class OPAFImage:
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
         node.setAttribute("name", self.name)
-        node.setAttribute("data", self.data)
+        node.setAttribute("data", base64.b64encode(self.data).decode('ascii'))
 
         return node
 
@@ -70,8 +74,18 @@ class OPAFImage:
             if not img_path:
                 raise Exception("Image not found with uri： %s" % uri)
 
-            data = Utils.image_to_base64(img_path, size)
+            img = Image.open(img_path).convert("RGBA")
+            img.thumbnail((size, size))
+
+            # Convert to RGB
+            rgb_img = Image.new("RGBA", img.size, "WHITE")
+            rgb_img.paste(img, mask=img)
+
+            img_file = BytesIO()
+            rgb_img.convert('RGB').save(img_file, 'JPEG', quality=80)
+
+            data = img_file.getvalue()
         else:
-            data = node.getAttribute("data")
+            data = base64.b64decode(node.getAttribute("data"))
 
         return OPAFImage(name, data)

@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import base64
 import xml.dom.minidom
 import uuid
 
@@ -444,7 +445,10 @@ class OPAFCompiler:
             for i in self.opaf_doc.opaf_images:
                 image_element = self.compiled_doc.createElement("image")
                 image_element.setAttribute("name", i.name)
-                image_element.setAttribute("data", i.data)
+                image_element.setAttribute(
+                    "data",
+                    base64.b64encode(i.data).decode('ascii')
+                )
 
                 root_element.appendChild(image_element)
 

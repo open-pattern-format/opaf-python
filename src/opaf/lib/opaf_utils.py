@@ -12,14 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import base64
 import os
 import re
 import xml.dom.minidom
 
 from importlib.metadata import metadata
-from io import BytesIO
-from PIL import Image
 from xml.dom.minidom import parseString
 
 from opaf.lib import OPAFFuncs
@@ -268,19 +265,6 @@ def node_arr_to_string(node_arr):
         str += node.toxml()
 
     return str
-
-
-def image_to_base64(img_path, size):
-    img = Image.open(img_path)
-    img.convert("RGB")
-    img.thumbnail((size, size))
-
-    img_file = BytesIO()
-    img.save(img_file, format="WEBP")
-    img_bytes = img_file.getvalue()
-    b64_img = base64.b64encode(img_bytes)
-
-    return b64_img.decode('ascii')
 
 
 def parse_arg_list(arg_list):
