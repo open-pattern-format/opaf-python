@@ -183,7 +183,28 @@ class OPAFCompiler:
                 )
 
         Utils.validate_params(self.opaf_doc, params)
-        nodes = Utils.evaluate_action_node(action, params)
+
+        # Process action elements
+        nodes = []
+
+        for e in action.elements:
+            element = parseString(e).documentElement
+
+            # Handle condition
+            if element.hasAttribute('condition'):
+                if not Utils.evaluate_condition(
+                    element.getAttribute('condition'),
+                    params
+                ):
+                    continue
+
+                element.removeAttribute('condition')
+
+            for i in range(0, element.attributes.length):
+                attr = element.attributes.item(i)
+                element.setAttribute(attr.name, Utils.evaluate_expr(attr.value, params))
+
+            nodes.append(element)
 
         return nodes
 
@@ -241,10 +262,18 @@ class OPAFCompiler:
         if row_num > 0:
             if len(chart.rows) >= row_num:
                 row = parseString(chart.rows[row_num - 1]).documentElement
+                row_actions = row.getElementsByTagName('opaf:action')
 
-                for c in row.getElementsByTagName('opaf:action'):
+                for c in row_actions:
                     if c.getAttribute('name') == 'none':
                         continue
+
+                    if len(row_actions) == 1 and repeat > 1:
+                        if c.hasAttribute('count'):
+                            c.setAttribute(
+                                'count',
+                                str(int(c.getAttribute('count')) * repeat)
+                            )
 
                     nodes += self.__process_opaf_node(c, values)
 
@@ -266,7 +295,7 @@ class OPAFCompiler:
                 nodes += r_nodes
 
         # Handle repeats
-        if repeat > 1 and len(nodes) > 0:
+        if repeat > 1 and len(nodes) > 1:
             repeat_element = self.compiled_doc.createElement("repeat")
             repeat_element.setAttribute("count", str(repeat))
 
@@ -274,8 +303,8 @@ class OPAFCompiler:
                 repeat_element.appendChild(n)
 
             return [repeat_element]
-        else:
-            return nodes
+
+        return nodes
 
     def __process_opaf_block(self, node, values):
         # Get block object

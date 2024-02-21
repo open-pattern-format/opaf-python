@@ -17,7 +17,6 @@ import re
 import xml.dom.minidom
 
 from importlib.metadata import metadata
-from xml.dom.minidom import parseString
 
 from opaf.lib import OPAFFuncs
 
@@ -188,29 +187,6 @@ def validate_params(doc, params):
 
         if params['color'] not in colors:
             raise Exception('color "' + params['color'] + '" is not defined')
-
-
-def evaluate_action_node(action, values):
-    # Process action elements
-    nodes = []
-
-    for e in action.elements:
-        element = parseString(e).documentElement
-
-        # Handle condition
-        if element.hasAttribute('condition'):
-            if not evaluate_condition(element.getAttribute('condition'), values):
-                continue
-
-            element.removeAttribute('condition')
-
-        for i in range(0, element.attributes.length):
-            attr = element.attributes.item(i)
-            element.setAttribute(attr.name, evaluate_expr(attr.value, values))
-
-        nodes.append(element)
-
-    return nodes
 
 
 def sort_node_array(node_arr):
