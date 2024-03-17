@@ -144,10 +144,15 @@ def evaluate_expr(expr, values):
         "AND": OPAFFuncs._and_,
         "OR": OPAFFuncs._or_,
         "NOT": OPAFFuncs._not_,
-        "ABS": OPAFFuncs._abs_,
+        "ABS": OPAFFuncs.abs,
         "CHOOSE": OPAFFuncs.choose,
         "LCHOOSE": OPAFFuncs.loop_choose,
         "ISEMPTY": OPAFFuncs.is_empty,
+        "ODD": OPAFFuncs.odd,
+        "EVEN": OPAFFuncs.even,
+        "MULTIPLE": OPAFFuncs.multiple,
+        "MAX": OPAFFuncs.max,
+        "MIN": OPAFFuncs.min,
     }
 
     def eval_fn(obj):
@@ -178,15 +183,6 @@ def evaluate_node_condition(node, values):
         return evaluate_condition(condition, values)
 
     return True
-
-
-def validate_params(doc, params):
-    # Check colors
-    if 'color' in params:
-        colors = doc.get_opaf_colors()
-
-        if params['color'] not in colors:
-            raise Exception('color "' + params['color'] + '" is not defined')
 
 
 def sort_node_array(node_arr):

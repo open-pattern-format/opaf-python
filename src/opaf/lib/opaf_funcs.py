@@ -47,8 +47,8 @@ def greater(num, test):
 
 
 @staticmethod
-def _abs_(num):
-    return abs(num)
+def abs(num):
+    return builtins.abs(num)
 
 
 @staticmethod
@@ -114,3 +114,28 @@ def loop_choose(index, values):
 @staticmethod
 def is_empty(val):
     return str(val) == ''
+
+
+@staticmethod
+def odd(val):
+    return not even(val)
+
+
+@staticmethod
+def even(val):
+    return (val % 2) == 0
+
+
+@staticmethod
+def multiple(val, multiple):
+    return (val % multiple) == 0
+
+
+@staticmethod
+def min(val1, val2):
+    return builtins.min(val1, val2)
+
+
+@staticmethod
+def max(val1, val2):
+    return builtins.max(val1, val2)

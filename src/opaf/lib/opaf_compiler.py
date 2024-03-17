@@ -98,6 +98,59 @@ class OPAFCompiler:
 
             parent.appendChild(color_element)
 
+    def __process_charts(self, parent):
+        for chart in self.opaf_doc.opaf_charts:
+            chart_nodes = []
+
+            chart_element = self.compiled_doc.createElement('chart')
+            chart_element.setAttribute('name', chart.name)
+
+            chart.row_actions = []
+            chart.processed_row_actions = []
+            chart.row_colors = []
+            chart.row_counts = []
+
+            for r in chart.rows:
+                row = parseString(r).documentElement
+                chart_nodes += self.__process_opaf_node(row, self.global_values)
+
+                r_actions = []
+
+                for a in row.getElementsByTagName('opaf:action'):
+                    if a.getAttribute('name') == 'none':
+                        continue
+
+                    if Utils.evaluate_node_condition(a, self.global_values):
+                        r_actions.append(a)
+
+                if len(r_actions) == 0:
+                    raise Exception("opaf:chart - no actions found for row")
+
+                chart.row_actions.append(r_actions)
+
+            for n in chart_nodes:
+                chart_element.appendChild(n.cloneNode(True))
+
+                # Store row info
+                actions = []
+                colors = []
+                count = 0
+
+                for a in n.childNodes:
+                    total = int(a.getAttribute('total'))
+                    color = a.getAttribute('color')
+                    actions.append(a)
+                    count += total
+
+                    for i in range(0, total):
+                        colors.append(color)
+
+                chart.processed_row_actions.append(actions)
+                chart.row_colors.append(colors)
+                chart.row_counts.append(count)
+
+            parent.appendChild(chart_element)
+
     def __process_opaf_row(self, node, values):
         new_element = self.compiled_doc.createElement('row')
 
@@ -105,12 +158,8 @@ class OPAFCompiler:
         if not node.hasAttribute('type'):
             raise Exception("Row attribute 'type' is missing")
 
-        # Add default params
-        if 'opaf_prev_row_count' in self.global_values:
-            values['opaf_prev_row_count'] = self.global_values['opaf_prev_row_count']
-
-        if 'opaf_prev_row_offset' in self.global_values:
-            values['opaf_prev_row_offset'] = self.global_values['opaf_prev_row_offset']
+        # Update global values
+        values.update(self.global_values)
 
         # Copy attributes
         if node.hasAttributes():
@@ -157,6 +206,7 @@ class OPAFCompiler:
 
         # Process parameters
         params = action.params.copy()
+        params.update(self.global_values)
 
         for i in range(0, node.attributes.length):
             attr = node.attributes.item(i)
@@ -183,7 +233,41 @@ class OPAFCompiler:
                     + '"'
                 )
 
-        Utils.validate_params(self.opaf_doc, params)
+        # Process color
+        if 'color' in params:
+            color = params['color'].split(':')
+
+            if len(color) == 1:
+                if color[0] not in self.opaf_doc.get_opaf_colors():
+                    raise Exception('color "' + color[0] + '" is not defined')
+            else:
+                # Color from chart
+                if color[0] == 'chart':
+                    if len(color) != 4:
+                        raise Exception(
+                            'chart color definition is invalid: ' + params['color']
+                        )
+
+                    chart = self.opaf_doc.get_opaf_chart(color[1])
+                    row = int(color[2]) - 1
+                    stitch = int(color[3])
+
+                    # Get row in correct range
+                    if row >= len(chart.row_colors):
+                        row = row % len(chart.row_colors)
+
+                    # Get stitch in correct range
+                    if stitch >= len(chart.row_colors[row]):
+                        stitch = stitch % len(chart.row_colors[row])
+
+                    if stitch < 0:
+                        stitch = (
+                            len(chart.row_colors[row])
+                            -
+                            (abs(stitch) % len(chart.row_colors[row]))
+                        )
+
+                    params['color'] = chart.row_colors[row][stitch]
 
         # Process action elements
         nodes = []
@@ -269,65 +353,58 @@ class OPAFCompiler:
             )
 
         # Check row number has been specified
-        if row_num == 0:
+        if row_num <= 0:
             raise Exception(
                 "opaf:chart received an invalid or missing 'row' attribute"
             )
 
-        # Check stitch count is valid
-        if count == 0:
-            raise Exception(
-                "opaf:chart received an invalid or missing 'count' attribute"
-            )
-
-        # Parse rows
-        rows = []
-
-        for r in chart.rows:
-            r_node = parseString(r).documentElement
-
-            if Utils.evaluate_node_condition(r_node, values):
-                rows.append(r_node)
-
         # Get row and actions
-        if row_num > len(rows):
-            raise Exception("opaf:chart - row specified is invalid")
+        if row_num > len(chart.row_actions):
+            row_num = row_num % len(chart.row_actions)
 
-        row = rows[row_num - 1]
-        row_actions = []
+            if row_num == 0:
+                row_num = len(chart.row_actions)
 
-        for a in row.getElementsByTagName('opaf:action'):
-            if a.getAttribute('name') == 'none':
-                continue
-
-            if Utils.evaluate_node_condition(a, values):
-                row_actions.append(a)
-
-        if len(row_actions) == 0:
-            raise Exception("opaf:chart - no actions found for specified row")
+        row_num -= 1
 
         # Processed actions
-        p_actions = []
-        row_count = 0
+        r_actions = chart.row_actions[row_num]
+        p_actions = chart.processed_row_actions[row_num]
+        row_count = chart.row_counts[row_num]
 
-        for a in row_actions:
-            p_nodes = self.__process_opaf_node(a, values)
-
-            for pn in p_nodes:
-                row_count += int(pn.getAttribute('total'))
-                p_actions.append(pn)
-
+        # Get offset in correct range
         if offset > row_count:
-            raise Exception(
-                "opaf:chart - offset is greater than requested row stitch count"
-            )
+            offset = offset % row_count
+
+        if offset < 0:
+            offset = row_count - (abs(offset) % row_count)
 
         # Process nodes to return
         nodes = []
 
+        # Handle single action case
+        if len(p_actions) == 1:
+            pa = p_actions[0]
+            a = r_actions[0]
+
+            a_count = int(pa.getAttribute('count'))
+            a_total = int(pa.getAttribute('total'))
+            a_sts = round(a_total / a_count)
+
+            if (count % a_sts) != 0:
+                raise Exception("opaf:chart - cannot return desired stitch count")
+
+            a.setAttribute('count', str(round(count / a_sts)))
+            nodes += self.__process_opaf_action(a, values)
+            count = 0
+            offset = 0
+
         # Handle offset
         if offset > 0:
             for i in range(0, len(p_actions)):
+                if count == 0:
+                    break
+
                 pa = p_actions[i]
 
                 p_count = int(pa.getAttribute('count'))
@@ -339,22 +416,36 @@ class OPAFCompiler:
                     count -= p_total
                     continue
 
-                if round(p_total / p_count) > offset:
-                    raise Exception("opaf:chart - offset is invalid")
-
                 if p_total <= offset:
                     offset -= p_total
                     continue
 
                 # Refactor action for offset or stitch count
-                a = row_actions[i]
+                a = r_actions[i]
 
                 if offset == 0:
+                    if (round(p_total / p_count) % count) != 0:
+                        raise Exception("opaf:chart - cannot return desired stitch count")
+
                     a_count = round((p_count / p_total) * count)
-                    count -= round((p_total / p_count) * count)
+                    count -= round((p_total / p_count) * a_count)
                 else:
-                    a_count = round((p_count / p_total) * offset)
-                    count -= round((p_total / p_count) * offset)
+                    if round(p_total / p_count) > offset:
+                        raise Exception("opaf:chart - offset is invalid")
+
+                    a_count = p_count - round((p_count / p_total) * offset)
+                    c_count = round((p_count / p_total) * count)
+
+                    if a_count > c_count:
+                        if (count % round(p_total / p_count)) != 0:
+                            raise Exception(
+                                "opaf:chart - cannot return desired stitch count"
+                            )
+
+                        a_count = c_count
+
+                    count -= round((p_total / p_count) * a_count)
+                    offset = 0
 
                 a.setAttribute('count', str(a_count))
                 nodes += self.__process_opaf_action(a, values)
@@ -378,7 +469,7 @@ class OPAFCompiler:
         # Work out remaining stitches
         if count > 0:
             for i in range(0, len(p_actions)):
-                # Check if offset is reached
+                # Check if stitch count is reached
                 if count == 0:
                     break
 
@@ -396,7 +487,10 @@ class OPAFCompiler:
                     continue
 
                 # Refactor action for desired stitch count
-                a = row_actions[i]
+                if (count % round(p_total / p_count)) != 0:
+                    raise Exception("opaf:chart - cannot return desired stitch count")
+
+                a = r_actions[i]
                 a_count = round((p_count / p_total) * count)
                 a.setAttribute('count', str(a_count))
                 nodes += self.__process_opaf_action(a, values)
@@ -404,7 +498,7 @@ class OPAFCompiler:
                 break
 
         # Add chart reference to actions
-        Utils.add_chart_attribute(nodes, name, row_num - 1)
+        Utils.add_chart_attribute(nodes, name, row_num)
 
         return nodes
 
@@ -412,6 +506,9 @@ class OPAFCompiler:
         # Get block object
         name = node.getAttribute('name')
         block = self.opaf_doc.get_opaf_block(name)
+
+        # Add global values to params
+        values.update(self.global_values)
 
         # Repeat
         repeat = 1
@@ -457,6 +554,8 @@ class OPAFCompiler:
                 )
 
         params['repeat_total'] = repeat
+
+        params.update(self.global_values)
 
         # Process elements the required number of times handling repeats
         node_arrays = []
@@ -608,20 +707,7 @@ class OPAFCompiler:
         self.__process_colors(root_element)
 
         # Process charts
-        for chart in self.opaf_doc.opaf_charts:
-            chart_nodes = []
-
-            chart_element = self.compiled_doc.createElement('chart')
-            chart_element.setAttribute('name', chart.name)
-
-            for r in chart.rows:
-                row = parseString(r).documentElement
-                chart_nodes += self.__process_opaf_node(row, self.global_values)
-
-            for n in chart_nodes:
-                chart_element.appendChild(n)
-
-            root_element.appendChild(chart_element)
+        self.__process_charts(root_element)
 
         # Process components
         for component in self.opaf_doc.opaf_components:
