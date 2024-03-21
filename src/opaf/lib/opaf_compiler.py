@@ -235,7 +235,7 @@ class OPAFCompiler:
 
         # Process color
         if 'color' in params:
-            color = params['color'].split(':')
+            color = str(params['color']).split(':')
 
             if len(color) == 1:
                 if color[0] not in self.opaf_doc.get_opaf_colors():
