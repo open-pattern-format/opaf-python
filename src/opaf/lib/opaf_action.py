@@ -78,7 +78,7 @@ class OPAFAction:
                         param = param.split('=')
                         params[param[0]] = Utils.str_to_num(param[1])
                     else:
-                        params[param] = ''
+                        params[param] = None
 
         # Elements
         actions = node.getElementsByTagName("action")

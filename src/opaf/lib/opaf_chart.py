@@ -25,6 +25,7 @@ class OPAFChart:
 
     CHART_NODES = [
         'action',
+        'repeat',
         'row',
     ]
 

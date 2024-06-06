@@ -30,9 +30,9 @@ SUPPORTED_NODES = [
     'define_value',
     'action',
     'block',
-    'chart',
     'component',
     'image',
+    'instruction',
     'repeat',
     'row',
     'text'
@@ -120,10 +120,10 @@ def params_to_str(params):
     param_strs = []
 
     for param in params:
-        if params[param]:
-            param_strs.append(param + '=' + str(params[param]))
-        else:
+        if params[param] == None:
             param_strs.append(param)
+        else:
+            param_strs.append(param + '=' + str(params[param]))
 
     return " ".join(param_strs)
 
