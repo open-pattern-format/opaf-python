@@ -21,6 +21,7 @@ from opaf.lib import (
     OPAFBlock,
     OPAFChart,
     OPAFColor,
+    OPAFConfig,
     OPAFComponent,
     OPAFDocument,
     OPAFImage,
@@ -69,6 +70,14 @@ class OPAFParser:
         # Check for unique ID
         if doc.documentElement.hasAttribute("unique_id"):
             self.opaf_doc.set_unique_id(doc.documentElement.getAttribute("unique_id"))
+
+    def __parse_opaf_configs(self, doc):
+        root = doc.documentElement
+        elements = root.getElementsByTagNameNS(self.namespace, "define_config")
+
+        for element in elements:
+            config = OPAFConfig.parse(element)
+            self.opaf_doc.add_opaf_config(config)
 
     def __parse_opaf_values(self, doc):
         root = doc.documentElement
@@ -149,6 +158,7 @@ class OPAFParser:
             inc_doc = xml.dom.minidom.parse(file_path)
             self.__parse_opaf_includes(inc_doc, os.path.dirname(file_path))
             self.__parse_opaf_colors(inc_doc)
+            self.__parse_opaf_configs(inc_doc)
             self.__parse_opaf_values(inc_doc)
             self.__parse_opaf_images(inc_doc, os.path.dirname(file_path))
             self.__parse_opaf_metadata(inc_doc)
@@ -172,6 +182,7 @@ class OPAFParser:
         # Parse main file
         self.__parse_opaf_includes(doc, os.path.dirname(self.src_path))
         self.__parse_opaf_colors(doc)
+        self.__parse_opaf_configs(doc)
         self.__parse_opaf_values(doc)
         self.__parse_opaf_images(doc, os.path.dirname(self.src_path))
         self.__parse_opaf_metadata(doc)

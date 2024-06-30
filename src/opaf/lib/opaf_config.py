@@ -12,31 +12,24 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-import re
+import uuid
 import xml.dom.minidom
 
 
-class OPAFColor:
+class OPAFConfig:
 
-    __DEFINE_NAME__ = "opaf:define_color"
-
-    __HEX_COLORS__ = {
-        'black': '#000000',
-        'silver': '#C0C0C0',
-        'white': '#FFFFFF',
-        'red': '#FF0000',
-        'purple': '#800080',
-        'green': '#008000',
-        'yellow': '#FFFF00',
-        'blue': '#0000FF',
-    }
+    __DEFINE_NAME__ = "opaf:define_config"
 
     def __init__(self,
                  name,
                  value,
-                 description):
+                 required=False,
+                 allowed_values=None,
+                 description=None):
         self.name = name
         self.value = value
+        self.required = required
+        self.allowed_values = allowed_values
         self.description = description
 
     def to_node(self):
@@ -44,28 +37,15 @@ class OPAFColor:
         node = doc.createElement(self.__DEFINE_NAME__)
         node.setAttribute("name", self.name)
         node.setAttribute("value", self.value)
-        node.setAttribute("description", self.description)
+        node.setAttribute('required', str(self.required).lower())
+
+        if self.allowed_values:
+            node.setAttribute('allowed_values', ','.join(self.allowed_values))
+
+        if self.description:
+            node.setAttribute("description", self.description)
 
         return node
-
-    @staticmethod
-    def to_hex(value):
-        if not OPAFColor.is_valid(value):
-            raise Exception("'" + value + "' is not a valid hex rgb color string")
-
-        if value in OPAFColor.__HEX_COLORS__:
-            value = OPAFColor.__HEX_COLORS__[value]
-
-        return value.lower()
-
-    @staticmethod
-    def is_valid(value):
-        hex_str = re.compile(r'#[a-fA-F0-9]{6}$')
-
-        if value in OPAFColor.__HEX_COLORS__:
-            return True
-
-        return hex_str.match(value)
 
     @staticmethod
     def parse(node):
@@ -75,26 +55,42 @@ class OPAFColor:
         if not node.nodeType == xml.dom.Node.ELEMENT_NODE:
             raise Exception("Unexpected node type")
 
-        if not node.nodeName == OPAFColor.__DEFINE_NAME__:
+        if not node.nodeName == OPAFConfig.__DEFINE_NAME__:
             raise Exception(
                 "Expected node with name '"
-                + OPAFColor.__DEFINE_NAME__
+                + OPAFConfig.__DEFINE_NAME__
                 + "' and got '"
                 + node.nodeName
                 + "'"
             )
 
-        # Parse node element
-        root_element = node
-
         # Name
-        name = root_element.getAttribute('name')
+        name = node.getAttribute("name")
 
-        # Color
-        value = root_element.getAttribute('value').strip().lower()
-        value = OPAFColor.to_hex(value)
+        # Value
+        value = node.getAttribute("value")
+
+        # Required
+        required = False
+
+        if node.hasAttribute('required'):
+            required = node.getAttribute('required').lower() == 'true'
+
+        # Allowed Values
+        allowed_values = []
+        if node.hasAttribute('allowed_values'):
+            allowed_values = node.getAttribute('allowed_values').split(',')
+            allowed_values = map(str.strip, allowed_values)
 
         # Description
-        description = root_element.getAttribute('description')
+        description = None
+        if node.hasAttribute("description"):
+            description = node.getAttribute("description")
 
-        return OPAFColor(name, value, description)
+        return OPAFConfig(
+            name,
+            value,
+            required,
+            allowed_values,
+            description
+        )

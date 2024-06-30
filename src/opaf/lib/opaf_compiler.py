@@ -33,12 +33,45 @@ class OPAFCompiler:
         'name',
     ]
 
-    def __init__(self, doc, values={}, colors={}):
+    def __init__(self, doc, configs={}, colors={}):
         self.opaf_doc = doc
         self.compiled_doc = xml.dom.minidom.Document()
-        self.custom_values = values
+        self.custom_config = configs
         self.custom_colors = colors
         self.global_values = {}
+
+    def __process_configs(self, parent):
+        for c in self.opaf_doc.opaf_configs:
+            if c.name in self.custom_config:
+                # Check allowed values
+                if c.allowed_values:
+                    if not self.custom_config[c.name] in c.allowed_values:
+                        raise Exception(
+                            '"' +
+                            self.custom_config[c.name] +
+                            '" is not a valid value for "' +
+                            c.name +
+                            '"'
+                        )
+
+                self.global_values[c.name] = Utils.str_to_num(
+                    self.custom_config[c.name]
+                )
+
+                continue
+            else:
+                self.global_values[c.name] = Utils.str_to_num(
+                    Utils.evaluate_expr(
+                        c.value,
+                        self.global_values
+                    )
+                )
+
+            # Add config to project
+            config_element = self.compiled_doc.createElement('config')
+            config_element.setAttribute('name', c.name)
+            config_element.setAttribute("value", str(self.global_values[c.name]))
+            parent.appendChild(config_element)
 
     def __process_values(self, parent):
         for v in self.opaf_doc.opaf_values:
@@ -46,34 +79,6 @@ class OPAFCompiler:
             if v.condition:
                 if not Utils.evaluate_condition(v.condition, self.global_values):
                     continue
-
-            if v.config:
-                config_element = self.compiled_doc.createElement('config')
-                config_element.setAttribute('name', v.name)
-
-                if v.name in self.custom_values:
-                    # Check allowed values
-                    if v.allowed_values:
-                        if not self.custom_values[v.name] in v.allowed_values:
-                            raise Exception(
-                                '"' +
-                                self.custom_values[v.name] +
-                                '" is not a valid value for "' +
-                                v.name +
-                                '"'
-                            )
-
-                    config_element.setAttribute("value", self.custom_values[v.name])
-                    parent.appendChild(config_element)
-
-                    self.global_values[v.name] = Utils.str_to_num(
-                        self.custom_values[v.name]
-                    )
-
-                    continue
-                else:
-                    config_element.setAttribute("value", v.value)
-                    parent.appendChild(config_element)
 
             self.global_values[v.name] = Utils.str_to_num(
                 Utils.evaluate_expr(
@@ -446,6 +451,7 @@ class OPAFCompiler:
         root_element.appendChild(pattern_element)
 
         # Evaluate global values
+        self.__process_configs(root_element)
         self.__process_values(root_element)
 
         # Process colors

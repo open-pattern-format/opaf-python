@@ -51,9 +51,9 @@ def main():
         help='Extract images from OPAF package'
     )
     parser.add_argument(
-        '--values',
+        '--config',
         required=False,
-        help='Values to use for compilation'
+        help='Config to use for compilation'
     )
     parser.add_argument(
         '--colors',
@@ -74,7 +74,7 @@ def main():
     package = args.get('package')
     compile = args.get('compile')
     extract_images = args.get('extract_images')
-    values = args.get('values')
+    config = args.get('config')
     colors = args.get('colors')
     log_level = getattr(logging, args.get('log_level').upper(), None)
 
@@ -141,12 +141,12 @@ def main():
                 # Parse custom colors
                 custom_colors = Utils.parse_arg_list(colors)
 
-                # Parse custom values
-                custom_values = Utils.parse_arg_list(values)
+                # Parse custom config
+                custom_config = Utils.parse_arg_list(config)
 
                 opaf_compiler = OPAFCompiler(
                     opaf_doc,
-                    values=custom_values,
+                    configs=custom_config,
                     colors=custom_colors
                 )
                 compiled_pattern = opaf_compiler.compile(compile)

@@ -54,6 +54,10 @@ class OPAFPackager:
         for action in self.opaf_doc.opaf_actions:
             root_element.appendChild(action.to_node())
 
+        # Configs
+        for config in self.opaf_doc.opaf_configs:
+            root_element.appendChild(config.to_node())
+
         # Values
         for value in self.opaf_doc.opaf_values:
             root_element.appendChild(value.to_node())

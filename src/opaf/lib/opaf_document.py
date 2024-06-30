@@ -21,6 +21,7 @@ class OPAFDocument:
         self.version = None
         self.opaf_namespace = None
         self.pkg_version = None
+        self.opaf_configs = []
         self.opaf_values = []
         self.opaf_colors = []
         self.opaf_images = []
@@ -44,6 +45,9 @@ class OPAFDocument:
 
     def set_opaf_namespace(self, value):
         self.opaf_namespace = value
+
+    def add_opaf_config(self, value):
+        self.opaf_configs.append(value)
 
     def add_opaf_value(self, value):
         self.opaf_values.append(value)

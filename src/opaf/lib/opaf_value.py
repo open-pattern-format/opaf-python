@@ -12,6 +12,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import uuid
 import xml.dom.minidom
 
 
@@ -22,32 +23,19 @@ class OPAFValue:
     def __init__(self,
                  name,
                  value,
-                 config=False,
-                 required=False,
-                 allowed_values=None,
-                 description=None,
+                 uid=None,
                  condition=None):
+        self.uid = uid
         self.name = name
         self.value = value
-        self.config = config
-        self.required = required
-        self.allowed_values = allowed_values
-        self.description = description
         self.condition = condition
 
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
+        node.setAttribute("unique_id", self.uid)
         node.setAttribute("name", self.name)
         node.setAttribute("value", self.value)
-        node.setAttribute('config', str(self.config).lower())
-        node.setAttribute('required', str(self.required).lower())
-
-        if self.allowed_values:
-            node.setAttribute('allowed_values', ','.join(self.allowed_values))
-
-        if self.description:
-            node.setAttribute("description", self.description)
 
         if self.condition:
             node.setAttribute("condition", self.condition)
@@ -77,28 +65,11 @@ class OPAFValue:
         # Value
         value = node.getAttribute("value")
 
-        # Configurable
-        config = False
-
-        if node.hasAttribute('config'):
-            config = node.getAttribute('config').lower() == 'true'
-
-        # Required
-        required = False
-
-        if node.hasAttribute('required'):
-            required = node.getAttribute('required').lower() == 'true'
-
-        # Allowed Values
-        allowed_values = []
-        if node.hasAttribute('allowed_values'):
-            allowed_values = node.getAttribute('allowed_values').split(',')
-            allowed_values = map(str.strip, allowed_values)
-
-        # Description
-        description = None
-        if node.hasAttribute("description"):
-            description = node.getAttribute("description")
+        # Unique ID
+        if node.hasAttribute("unique_id"):
+            uid = node.getAttribute("unique_id")
+        else:
+            uid = str(uuid.uuid4())
 
         # Condition
         condition = None
@@ -108,9 +79,6 @@ class OPAFValue:
         return OPAFValue(
             name,
             value,
-            config,
-            required,
-            allowed_values,
-            description,
+            uid,
             condition
         )

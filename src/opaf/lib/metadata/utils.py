@@ -16,7 +16,6 @@ import xml.dom.minidom
 
 
 SUPPORTED_NODES = [
-    'color',
     'copyright',
     'description',
     'designer',
