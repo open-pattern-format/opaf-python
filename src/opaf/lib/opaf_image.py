@@ -74,15 +74,15 @@ class OPAFImage:
             if not img_path:
                 raise Exception("Image not found with uri： %s" % uri)
 
-            img = Image.open(img_path).convert("RGBA")
+            img = Image.open(img_path)
             img.thumbnail((size, size))
 
-            # Convert to RGB
-            rgb_img = Image.new("RGBA", img.size, "WHITE")
-            rgb_img.paste(img, mask=img)
-
             img_file = BytesIO()
-            rgb_img.convert('RGB').save(img_file, 'JPEG', quality=80)
+
+            if img.has_transparency_data:
+                img.save(img_file, 'PNG')
+            else:
+                img.save(img_file, 'JPEG', quality=75)
 
             data = img_file.getvalue()
         else:
