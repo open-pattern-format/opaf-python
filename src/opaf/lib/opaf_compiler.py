@@ -121,24 +121,15 @@ class OPAFCompiler:
     def __process_opaf_instruction(self, node, values):
         new_element = self.compiled_doc.createElement('instruction')
 
-        # Check type attribute
-        if not node.hasAttribute('type'):
-            raise Exception("Instruction attribute 'type' is missing")
-
         # Update global values
         values.update(self.global_values)
 
-        # Copy attributes
-        if node.hasAttributes():
-            for i in range(0, node.attributes.length):
-                attr = node.attributes.item(i)
-
-                # Check protected attributes
-                if attr.name not in self.__PROTECTED_ATTRS__:
-                    new_element.setAttribute(
-                        attr.name,
-                        Utils.evaluate_expr(attr.value, values)
-                    )
+        # Check type attribute
+        if node.hasAttribute('name'):
+            new_element.setAttribute(
+                'name',
+                Utils.evaluate_expr(node.getAttribute('name'), values)
+            )
 
         nodes = []
 
