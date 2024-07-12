@@ -25,9 +25,11 @@ class OPAFAction:
 
     def __init__(self,
                  name,
+                 custom=False,
                  params={},
                  elements=None):
         self.name = name
+        self.custom = custom
         self.params = params
         self.elements = elements
 
@@ -35,6 +37,7 @@ class OPAFAction:
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
         node.setAttribute("name", self.name)
+        node.setAttribute("custom", str(self.custom).lower())
 
         if len(self.params) > 0:
             node.setAttribute("params", Utils.params_to_str(self.params))
@@ -86,4 +89,9 @@ class OPAFAction:
         for action in actions:
             elements.append(action.toxml())
 
-        return OPAFAction(name, params, elements)
+        custom = False
+        if node.hasAttribute("custom"):
+            custom = node.getAttribute("custom").lower() == "true"
+        
+
+        return OPAFAction(name, custom, params, elements)
