@@ -1,3 +1,6 @@
+# OPAF spec version supported
+SPEC_VERSION = "0.1"
+
 import opaf.lib.opaf_funcs as OPAFFuncs # noqa
 import opaf.lib.opaf_utils as Utils # noqa
 from opaf.lib.opaf_image import OPAFImage # noqa

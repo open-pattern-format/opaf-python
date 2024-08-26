@@ -18,8 +18,7 @@ from packaging.version import Version
 import xml.dom.minidom
 import uuid
 
-# OPAF spec version supported
-spec_version = Version("0.1")
+from opaf.lib import SPEC_VERSION
 
 class OPAFPackager:
 
@@ -31,7 +30,7 @@ class OPAFPackager:
         # Set root element
         root_element = self.pkg_doc.createElement("pattern")
         root_element.setAttribute("xmlns:opaf", self.opaf_doc.opaf_namespace)
-        root_element.setAttribute("spec_version", spec_version.__str__())
+        root_element.setAttribute("spec_version", SPEC_VERSION)
         root_element.setAttribute("pkg_version", "python_" + version('opaf'))
         root_element.setAttribute("name", self.opaf_doc.name)
 

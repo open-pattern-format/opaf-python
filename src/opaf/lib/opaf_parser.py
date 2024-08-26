@@ -80,7 +80,7 @@ class OPAFParser:
 
     def __parse_opaf_configs(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_config")
+        elements = root.getElementsByTagName("opaf:define_config")
 
         for element in elements:
             config = OPAFConfig.parse(element)
@@ -88,7 +88,7 @@ class OPAFParser:
 
     def __parse_opaf_values(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_value")
+        elements = root.getElementsByTagName("opaf:define_value")
 
         for element in elements:
             value = OPAFValue.parse(element)
@@ -96,7 +96,7 @@ class OPAFParser:
 
     def __parse_opaf_colors(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_color")
+        elements = root.getElementsByTagName("opaf:define_color")
 
         for element in elements:
             value = OPAFColor.parse(element)
@@ -104,7 +104,7 @@ class OPAFParser:
 
     def __parse_opaf_images(self, doc, dir):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_image")
+        elements = root.getElementsByTagName("opaf:define_image")
 
         for element in elements:
             image = OPAFImage.parse(element, dir)
@@ -120,7 +120,7 @@ class OPAFParser:
 
     def __parse_opaf_actions(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_action")
+        elements = root.getElementsByTagName("opaf:define_action")
 
         for element in elements:
             action = OPAFAction.parse(element)
@@ -128,7 +128,7 @@ class OPAFParser:
 
     def __parse_opaf_charts(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_chart")
+        elements = root.getElementsByTagName("opaf:define_chart")
 
         for element in elements:
             chart = OPAFChart.parse(element)
@@ -136,7 +136,7 @@ class OPAFParser:
 
     def __parse_opaf_blocks(self, doc):
         root = doc.documentElement
-        elements = root.getElementsByTagNameNS(self.namespace, "define_block")
+        elements = root.getElementsByTagName("opaf:define_block")
 
         for element in elements:
             block = OPAFBlock.parse(element)

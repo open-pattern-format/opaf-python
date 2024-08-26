@@ -20,6 +20,7 @@ import uuid
 from xml.dom.minidom import parseString
 
 from opaf.lib import (
+    SPEC_VERSION,
     OPAFColor,
     Utils
 )
@@ -202,11 +203,6 @@ class OPAFCompiler:
 
         for n in nodes:
             new_element.appendChild((n.cloneNode(deep=True)))
-
-        # Calculate row count
-        count = Utils.get_stitch_count(nodes)
-
-        new_element.setAttribute('count', str(count))
 
         return [new_element]
 
@@ -408,6 +404,7 @@ class OPAFCompiler:
         root_element = self.compiled_doc.createElement("project")
         root_element.setAttribute("name", name)
         root_element.setAttribute("unique_id", str(uuid.uuid4()))
+        root_element.setAttribute("spec_version", SPEC_VERSION)
 
         self.compiled_doc.appendChild(root_element)
 
@@ -427,7 +424,7 @@ class OPAFCompiler:
         pattern_element = self.compiled_doc.createElement("pattern")
         pattern_element.setAttribute("unique_id", self.opaf_doc.unique_id)
         pattern_element.setAttribute("name", self.opaf_doc.name)
-        pattern_element.setAttribute("version", self.opaf_doc.version.__str__)
+        pattern_element.setAttribute("version", self.opaf_doc.version.__str__())
 
         # Metadata
         if self.opaf_doc.opaf_metadata:
