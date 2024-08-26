@@ -14,7 +14,10 @@
 
 import os
 import xml.dom.minidom
+
 from xml.parsers.expat import ExpatError
+from packaging.version import Version
+
 
 from opaf.lib import (
     OPAFAction,
@@ -61,11 +64,15 @@ class OPAFParser:
 
         # Check for pattern version
         if doc.documentElement.hasAttribute("version"):
-            self.opaf_doc.set_version(doc.documentElement.getAttribute("version"))
+            self.opaf_doc.version = Version(doc.documentElement.getAttribute("version"))
+
+        # Check for spec version
+        if doc.documentElement.hasAttribute("spec_version"):
+            self.opaf_doc.spec_version = Version(doc.documentElement.getAttribute("spec_version"))
 
         # Check if this is a packaged file
         if doc.documentElement.hasAttribute("pkg_version"):
-            self.opaf_doc.set_pkg_version(doc.documentElement.getAttribute("pkg_version"))
+            self.opaf_doc.pkg_version = doc.documentElement.getAttribute("pkg_version")
 
         # Check for unique ID
         if doc.documentElement.hasAttribute("unique_id"):

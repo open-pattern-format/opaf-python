@@ -427,7 +427,7 @@ class OPAFCompiler:
         pattern_element = self.compiled_doc.createElement("pattern")
         pattern_element.setAttribute("unique_id", self.opaf_doc.unique_id)
         pattern_element.setAttribute("name", self.opaf_doc.name)
-        pattern_element.setAttribute("version", self.opaf_doc.version)
+        pattern_element.setAttribute("version", self.opaf_doc.version.__str__)
 
         # Metadata
         if self.opaf_doc.opaf_metadata:

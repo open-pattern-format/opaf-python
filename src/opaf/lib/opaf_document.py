@@ -20,6 +20,7 @@ class OPAFDocument:
         self.name = ""
         self.version = None
         self.opaf_namespace = None
+        self.spec_version = None
         self.pkg_version = None
         self.opaf_configs = []
         self.opaf_values = []
@@ -36,6 +37,9 @@ class OPAFDocument:
 
     def set_version(self, value):
         self.version = value
+    
+    def set_spec_version(self, value):
+        self.spec_version = value
 
     def set_unique_id(self, value):
         self.unique_id = value

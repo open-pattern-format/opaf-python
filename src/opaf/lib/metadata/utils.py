@@ -24,7 +24,7 @@ SUPPORTED_NODES = [
     'image',
     'link',
     'measurement',
-    'needles',
+    'needle',
     'note',
     'notion',
     'published',

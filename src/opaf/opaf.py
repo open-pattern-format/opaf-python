@@ -106,7 +106,7 @@ def main():
                 # Write OPAF package file
                 pkg_name = (
                     os.path.splitext(input_path)[0]
-                    + "_" + opaf_doc.version
+                    + "_" + opaf_doc.version.__str__()
                     + ".opafpkg"
                 )
                 Utils.write_to_file(opaf_pkg, pkg_name)

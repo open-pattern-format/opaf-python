@@ -13,14 +13,15 @@ maintainers = [
   {name = "Scott Ware"}
 ]
 dependencies = [
+  "packaging >= 24.0",
   "pillow >= 10.2.0",
 ]
 
 [project.urls]
-homepage = "https://github.com/open-pattern-format/opaf-python"
-documentation = "https://github.com/open-pattern-format/opaf-python/wiki"
+homepage = "https://openpatternformat.com"
+documentation = "https://docs.openpatternformat.com"
 repository = "https://github.com/open-pattern-format/opaf-python"
-namespace = "https://github.com/open-pattern-format/opaf/wiki"
+namespace = "https://github.com/open-pattern-format/opaf"
 
 [project.scripts]
 opaf = "opaf.opaf:main"

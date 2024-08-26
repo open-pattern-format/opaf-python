@@ -171,16 +171,22 @@ def evaluate_expr(expr, values):
 def evaluate_condition(condition, values):
     result = evaluate_expr(condition, values)
 
-    if result == 'False' or result == '0':
+    if result.lower() == 'false':
         return False
 
-    return True
+    if result.lower() == 'true':
+        return True
 
+    raise Exception(
+        "Condition " + condition + " did not evaluate to 'true' or 'false' as expected"
+    )
 
 def evaluate_node_condition(node, values):
     if node.hasAttribute('condition'):
         condition = node.getAttribute('condition')
-        return evaluate_condition(condition, values)
+
+        if condition != "":
+            return evaluate_condition(condition, values)
 
     return True
 
