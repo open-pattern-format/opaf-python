@@ -58,14 +58,19 @@ class OPAFCompiler:
                 self.global_values[c.name] = Utils.str_to_num(
                     self.custom_config[c.name]
                 )
-
-                continue
             else:
                 self.global_values[c.name] = Utils.str_to_num(
                     Utils.evaluate_expr(
                         c.value,
                         self.global_values
                     )
+                )
+            
+            if c.required and str(self.global_values[c.name]).strip() == '':
+                raise Exception(
+                    '"' +
+                    c.name +
+                    '" is required but a value was not given'
                 )
 
             # Add config to project
