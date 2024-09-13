@@ -99,6 +99,9 @@ def choose(index, values):
 
 @staticmethod
 def is_empty(val):
+    if val is None:
+        return True
+
     return str(val) == ''
 
 
