@@ -98,20 +98,6 @@ def choose(index, values):
 
 
 @staticmethod
-def loop_choose(index, values):
-    if index < 1:
-        raise Exception("Index must be 1 or greater for 'LCHOOSE' function")
-
-    # Loop index
-    index = index % len(values)
-
-    if index == 0:
-        index = len(values)
-
-    return values[index - 1]
-
-
-@staticmethod
 def is_empty(val):
     return str(val) == ''
 

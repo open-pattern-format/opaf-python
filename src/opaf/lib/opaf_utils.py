@@ -146,7 +146,6 @@ def evaluate_expr(expr, values):
         "NOT": OPAFFuncs._not_,
         "ABS": OPAFFuncs.abs,
         "CHOOSE": OPAFFuncs.choose,
-        "LCHOOSE": OPAFFuncs.loop_choose,
         "ISEMPTY": OPAFFuncs.is_empty,
         "ODD": OPAFFuncs.odd,
         "EVEN": OPAFFuncs.even,
