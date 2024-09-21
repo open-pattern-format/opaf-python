@@ -25,11 +25,13 @@ class OPAFConfig:
                  value,
                  required=False,
                  allowed_values=None,
+                 title=None,
                  description=None):
         self.name = name
         self.value = value
         self.required = required
         self.allowed_values = allowed_values
+        self.title = title
         self.description = description
 
     def to_node(self):
@@ -41,6 +43,9 @@ class OPAFConfig:
 
         if self.allowed_values:
             node.setAttribute('allowed_values', ','.join(self.allowed_values))
+
+        if self.title:
+            node.setAttribute("title", self.title)
 
         if self.description:
             node.setAttribute("description", self.description)
@@ -82,6 +87,11 @@ class OPAFConfig:
             allowed_values = node.getAttribute('allowed_values').split(',')
             allowed_values = map(str.strip, allowed_values)
 
+        # Title
+        title = None
+        if node.hasAttribute("title"):
+            title = node.getAttribute("title")
+
         # Description
         description = None
         if node.hasAttribute("description"):
@@ -92,5 +102,6 @@ class OPAFConfig:
             value,
             required,
             allowed_values,
+            title,
             description
         )
