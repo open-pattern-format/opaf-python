@@ -1,5 +1,5 @@
 # OPAF spec version supported
-SPEC_VERSION = "1.1"
+SPEC_VERSION = "1.2"
 
 import opaf.lib.opaf_funcs as OPAFFuncs # noqa
 import opaf.lib.opaf_utils as Utils # noqa
