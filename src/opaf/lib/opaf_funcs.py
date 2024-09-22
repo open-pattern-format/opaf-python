@@ -53,8 +53,17 @@ def abs(num):
 
 @staticmethod
 def equals(val, values):
+    if isinstance(val, str):
+        val = val.lower
+
+    if isinstance(values, str):
+        values = values.lower
+
     if isinstance(values, list):
         for v in values:
+            if isinstance(v, str):
+                v = v.lower
+
             if val == v:
                 return True
 
