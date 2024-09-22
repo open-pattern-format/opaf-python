@@ -152,6 +152,7 @@ def evaluate_expr(expr, values):
         "MULTIPLE": OPAFFuncs.multiple,
         "MAX": OPAFFuncs.max,
         "MIN": OPAFFuncs.min,
+        "BOOL": OPAFFuncs.to_bool,
     }
 
     def eval_fn(obj):

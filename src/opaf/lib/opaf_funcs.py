@@ -54,15 +54,15 @@ def abs(num):
 @staticmethod
 def equals(val, values):
     if isinstance(val, str):
-        val = val.lower
+        val = val.lower()
 
     if isinstance(values, str):
-        values = values.lower
+        values = values.lower()
 
     if isinstance(values, list):
         for v in values:
             if isinstance(v, str):
-                v = v.lower
+                v = v.lower()
 
             if val == v:
                 return True
@@ -137,3 +137,13 @@ def min(val1, val2):
 @staticmethod
 def max(val1, val2):
     return builtins.max(val1, val2)
+
+@staticmethod
+def to_bool(val):
+    if isinstance(val, bool):
+        return val
+    
+    if isinstance(val, str):
+        return val.strip().lower() in ("yes", "true", "1")
+    
+    return val == 1
