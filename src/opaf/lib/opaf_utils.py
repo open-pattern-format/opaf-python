@@ -19,6 +19,7 @@ import xml.dom.minidom
 from importlib.metadata import metadata
 
 from opaf.lib import OPAFFuncs
+from opaf.lib.opaf_funcs import if_else
 
 
 SUPPORTED_NODES = [
@@ -153,6 +154,7 @@ def evaluate_expr(expr, values):
         "MAX": OPAFFuncs.max,
         "MIN": OPAFFuncs.min,
         "BOOL": OPAFFuncs.to_bool,
+        "IF": OPAFFuncs.if_else,
     }
 
     def eval_fn(obj):

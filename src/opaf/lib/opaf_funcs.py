@@ -147,3 +147,11 @@ def to_bool(val):
         return val.strip().lower() in ("yes", "true", "1")
     
     return val == 1
+
+@staticmethod
+def if_else(test, val_t, val_f):
+    if test:
+        return val_t
+    
+    return val_f
+
