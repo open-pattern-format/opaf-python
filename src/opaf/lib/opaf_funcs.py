@@ -155,3 +155,6 @@ def if_else(test, val_t, val_f):
     
     return val_f
 
+@staticmethod
+def mod(val, div):
+    return val % div
