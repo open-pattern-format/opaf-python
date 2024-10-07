@@ -158,3 +158,22 @@ def if_else(test, val_t, val_f):
 @staticmethod
 def mod(val, div):
     return val % div
+
+@staticmethod
+def rept(val, num, sep):
+    if (num <= 0):
+      return ''
+
+    if (num == 1):
+      return str(val)
+
+    result = ''
+
+    for i in range(num):
+      result += str(val)
+
+      if i < (num - 1):
+        result += str(sep)
+
+    return result
+

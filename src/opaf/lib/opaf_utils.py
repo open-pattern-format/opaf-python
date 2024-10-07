@@ -156,6 +156,7 @@ def evaluate_expr(expr, values):
         "BOOL": OPAFFuncs.to_bool,
         "IF": OPAFFuncs.if_else,
         "MOD": OPAFFuncs.mod,
+        "REPT": OPAFFuncs.rept,
     }
 
     def eval_fn(obj):
