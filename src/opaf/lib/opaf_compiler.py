@@ -269,6 +269,17 @@ class OPAFCompiler:
                 attr = element.attributes.item(i)
                 element.setAttribute(attr.name, Utils.evaluate_expr(attr.value, params))
             
+            # Action attributes
+            if 'attrs' in params:
+                attrs = params['attrs'].split(',')
+
+                if len(attrs) > 0:
+                    if element.hasAttribute('attrs'):
+                        attrs += (element.getAttribute('attrs').split(','))
+                    
+                    element.setAttribute('attrs', ','.join(list(set(attrs))))
+
+            
             # Chart attribute
             if 'chart' in params:
                 element.setAttribute('chart', params['chart'])
