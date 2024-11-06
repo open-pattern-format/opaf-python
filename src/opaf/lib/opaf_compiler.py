@@ -110,6 +110,11 @@ class OPAFCompiler:
 
     def __process_charts(self, parent):
         for chart in self.opaf_doc.opaf_charts:
+            # Check condition
+            if chart.condition:
+                if not Utils.evaluate_condition(chart.condition, self.global_values):
+                    continue
+
             chart_nodes = []
 
             chart_element = self.compiled_doc.createElement('chart')

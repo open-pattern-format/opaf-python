@@ -31,14 +31,19 @@ class OPAFChart:
 
     def __init__(self,
                  name,
-                 rows):
+                 rows,
+                 condition=None):
         self.name = name
         self.rows = rows
+        self.condition = condition
 
     def to_node(self):
         doc = xml.dom.minidom.Document()
         node = doc.createElement(self.__DEFINE_NAME__)
         node.setAttribute("name", self.name)
+
+        if self.condition is not None:
+            node.setAttribute("condition", self.condition)
 
         for r in self.rows:
             row = parseString(r).documentElement
@@ -75,6 +80,11 @@ class OPAFChart:
 
         if ':' in name:
             raise Exception("Chart name '" + name + "' contains invalid character ':'")
+        
+        # Condition
+        condition = None
+        if node.hasAttribute("condition"):
+            condition = node.getAttribute("condition")
 
         # Elements
         Utils.check_node(node, OPAFChart.CHART_NODES)
@@ -84,4 +94,4 @@ class OPAFChart:
                 child.setAttribute("xmlns:opaf", Utils.get_url('namespace'))
                 rows.append(child.toxml())
 
-        return OPAFChart(name, rows)
+        return OPAFChart(name, rows, condition)
