@@ -16,6 +16,8 @@ import xml.dom.minidom
 
 
 SUPPORTED_NODES = [
+    'changelog',
+    'color',
     'copyright',
     'description',
     'designer',
@@ -37,6 +39,7 @@ SUPPORTED_NODES = [
 ]
 
 TEXT_NODES = [
+    'changelog',
     'copyright',
     'description',
     'published',
